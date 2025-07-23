@@ -1,37 +1,55 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Image from "next/image"
-import Link from "next/link"
-import AnimatedArticleCard from "@/components/animated-article-card"
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 
 const featuredArticles = [
   {
     id: "1",
-    title: "PlayStation 5: Sony Is Reportedly Going To Increase the Prices of Its First-Party Games in India",
-    image: "/placeholder.svg?height=300&width=400",
+    title:
+      "PlayStation 5: Sony Is Reportedly Going To Increase the Prices of Its First-Party Games in India",
+    media: {
+      type: "video" as const,
+      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      thumbnail: "/placeholder.svg?height=300&width=400",
+    },
     category: "Gaming",
   },
   {
     id: "2",
-    title: "Nintendo Switch 2 Should Reportedly Be Available in India Through Unofficial Channels From June 8",
-    image: "/placeholder.svg?height=300&width=400",
+    title:
+      "Nintendo Switch 2 Should Reportedly Be Available in India Through Unofficial Channels From June 8",
+    media: {
+      type: "image" as const,
+      url: "/placeholder.svg?height=300&width=400",
+    },
     category: "Gaming",
   },
   {
     id: "3",
-    title: "GDC 2025: The Indian Video Games Industry Was Represented by... Real-Money Gaming Again",
-    image: "/placeholder.svg?height=300&width=400",
+    title:
+      "GDC 2025: The Indian Video Games Industry Was Represented by... Real-Money Gaming Again",
+    media: {
+      type: "video" as const,
+      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      thumbnail: "/placeholder.svg?height=300&width=400",
+    },
     category: "Industry",
   },
-]
+];
 
 const articles = [
   {
     id: "1",
     title: "The Future of Gaming: AI and Machine Learning Revolution",
-    excerpt: "How artificial intelligence is transforming game development and player experiences.",
-    image: "/placeholder.svg?height=300&width=400",
+    excerpt:
+      "How artificial intelligence is transforming game development and player experiences.",
+    media: {
+      type: "video" as const,
+      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      thumbnail: "/placeholder.svg?height=300&width=400",
+    },
     category: "Technology",
     author: "Tech Expert",
     publishedAt: "2 hours ago",
@@ -40,8 +58,12 @@ const articles = [
   {
     id: "2",
     title: "Indie Game Spotlight: Hidden Gems You Need to Play",
-    excerpt: "Discover amazing independent games that are pushing creative boundaries.",
-    image: "/placeholder.svg?height=300&width=400",
+    excerpt:
+      "Discover amazing independent games that are pushing creative boundaries.",
+    media: {
+      type: "image" as const,
+      url: "/placeholder.svg?height=300&width=400",
+    },
     category: "Indie",
     author: "Indie Curator",
     publishedAt: "4 hours ago",
@@ -50,8 +72,13 @@ const articles = [
   {
     id: "3",
     title: "Esports in India: The Rise of Professional Gaming",
-    excerpt: "From PUBG Mobile to Valorant, Indian esports is gaining international recognition.",
-    image: "/placeholder.svg?height=300&width=400",
+    excerpt:
+      "From PUBG Mobile to Valorant, Indian esports is gaining international recognition.",
+    media: {
+      type: "video" as const,
+      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      thumbnail: "/placeholder.svg?height=300&width=400",
+    },
     category: "Esports",
     author: "Esports Reporter",
     publishedAt: "6 hours ago",
@@ -60,21 +87,72 @@ const articles = [
   {
     id: "4",
     title: "Next-Gen Console Wars: Performance Analysis",
-    excerpt: "Comparing the latest gaming consoles and their impact on the industry.",
-    image: "/placeholder.svg?height=300&width=400",
+    excerpt:
+      "Comparing the latest gaming consoles and their impact on the industry.",
+    media: {
+      type: "image" as const,
+      url: "/placeholder.svg?height=300&width=400",
+    },
     category: "Hardware",
     author: "Hardware Reviewer",
     publishedAt: "8 hours ago",
     readTime: "15 min read",
   },
-]
+];
+
+interface MediaDisplayProps {
+  media: {
+    type: "image" | "video";
+    url: string;
+    thumbnail?: string;
+  };
+  title: string;
+  className?: string;
+}
+
+function MediaDisplay({ media, title, className = "" }: MediaDisplayProps) {
+  if (media.type === "video") {
+    return (
+      <video
+        className={`w-full h-full object-cover ${className}`}
+        controls
+        preload="metadata"
+        poster={media.thumbnail}
+        aria-label={`Video: ${title}`}
+      >
+        <source src={media.url} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    );
+  }
+
+  return (
+    <Image
+      src={media.url || "/placeholder.svg"}
+      alt={title}
+      fill
+      className={`object-cover ${className}`}
+    />
+  );
+}
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative h-64 lg:h-96 overflow-hidden bg-black">
-        <div className="absolute inset-0 bg-gradient-to-r from-black to-gray-900" />
+        <div className="absolute inset-0">
+          <MediaDisplay
+            media={{
+              type: "video" as const,
+              url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+              thumbnail: "/placeholder.svg?height=400&width=800",
+            }}
+            title="Hero Background"
+            className="opacity-30"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-gray-900/80" />
         <div className="relative z-10 flex items-center h-full px-4 lg:px-8">
           <div className="text-white max-w-4xl">
             <motion.h1
@@ -105,19 +183,17 @@ export default function Home() {
             whileInView={{ opacity: 1, x: 0 }}
             className="relative h-64 lg:h-80 overflow-hidden rounded-lg"
           >
-            <Image
-              src="/placeholder.svg?height=400&width=600"
-              alt="Featured Story"
-              fill
-              className="object-cover"
+            <MediaDisplay
+              media={featuredArticles[0].media}
+              title={featuredArticles[0].title}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
               <span className="bg-white text-black px-3 py-1 text-xs font-bold rounded mb-3 inline-block">
                 FEATURED
               </span>
               <h2 className="text-white font-bold text-lg lg:text-2xl leading-tight">
-                PlayStation 5: Sony Is Reportedly Going To Increase the Prices of Its First-Party Games in India
+                {featuredArticles[0].title}
               </h2>
             </div>
           </motion.div>
@@ -131,11 +207,15 @@ export default function Home() {
                 className="flex gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors"
               >
                 <div className="relative w-20 h-14 lg:w-24 lg:h-16 flex-shrink-0 overflow-hidden rounded">
-                  <Image src={article.image} alt={article.title} fill className="object-cover" />
+                  <MediaDisplay media={article.media} title={article.title} />
                 </div>
                 <div className="flex-1">
-                  <span className="text-black text-xs font-semibold uppercase">{article.category}</span>
-                  <h3 className="text-gray-900 font-semibold text-xs lg:text-sm leading-tight mt-1">{article.title}</h3>
+                  <span className="text-black text-xs font-semibold uppercase">
+                    {article.category}
+                  </span>
+                  <h3 className="text-gray-900 font-semibold text-xs lg:text-sm leading-tight mt-1">
+                    {article.title}
+                  </h3>
                 </div>
               </motion.div>
             ))}
@@ -152,7 +232,6 @@ export default function Home() {
         >
           Latest News
         </motion.h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {articles.map((article, index) => (
             <Link key={article.id} href={`/post/future-of-gaming-2024`}>
@@ -160,15 +239,30 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
               >
                 <div className="relative h-40 lg:h-48 overflow-hidden">
-                  <Image src={article.image} alt={article.title} fill className="object-cover" />
+                  <MediaDisplay
+                    media={article.media}
+                    title={article.title}
+                    className="group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {article.media.type === "video" && (
+                    <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 text-xs rounded pointer-events-none">
+                      VIDEO
+                    </div>
+                  )}
                 </div>
                 <div className="p-3 lg:p-4">
-                  <span className="text-black text-xs font-semibold uppercase">{article.category}</span>
-                  <h3 className="text-gray-900 font-semibold text-sm lg:text-sm leading-tight mt-2 mb-2">{article.title}</h3>
-                  <p className="text-gray-600 text-xs mb-3 hidden lg:block">{article.excerpt}</p>
+                  <span className="text-black text-xs font-semibold uppercase">
+                    {article.category}
+                  </span>
+                  <h3 className="text-gray-900 font-semibold text-sm lg:text-sm leading-tight mt-2 mb-2 group-hover:text-red-600 transition-colors">
+                    {article.title}
+                  </h3>
+                  <p className="text-gray-600 text-xs mb-3 hidden lg:block">
+                    {article.excerpt}
+                  </p>
                   <div className="flex items-center justify-between text-xs text-gray-500">
                     <span className="truncate">{article.author}</span>
                     <span className="ml-2">{article.publishedAt}</span>
@@ -180,5 +274,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }
