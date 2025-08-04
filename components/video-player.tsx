@@ -32,7 +32,16 @@ export default function VideoPlayer({ src, poster, className = "", type = 'video
           const videoId = extractYouTubeId(src)
           if (videoId) {
             playerRef.current = new Plyr.default(videoRef.current!, {
-              controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'fullscreen']
+              controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'settings', 'fullscreen'],
+              settings: ['quality', 'speed'],
+              hideYouTubeDOMError: true,
+              youtube: {
+                noCookie: true,
+                rel: 0,
+                showinfo: 0,
+                iv_load_policy: 3,
+                modestbranding: 1
+              }
             })
           }
         } else {
@@ -148,6 +157,14 @@ export default function VideoPlayer({ src, poster, className = "", type = 'video
           background: rgba(0, 0, 0, 0.9);
           border-radius: 4px;
           color: #ffffff;
+        }
+        
+        .plyr--youtube .plyr__video-embed {
+          background: #000;
+        }
+        
+        .plyr__video-embed iframe {
+          border-radius: 8px;
         }
       `}</style>
     </div>
