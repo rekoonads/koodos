@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import VideoPlayer from "@/components/video-player";
 
 async function fetchLatestArticles() {
   try {
@@ -47,16 +48,11 @@ interface MediaDisplayProps {
 function MediaDisplay({ media, title, className = "" }: MediaDisplayProps) {
   if (media.type === "video") {
     return (
-      <video
-        className={`w-full h-full object-cover ${className}`}
-        controls
-        preload="metadata"
+      <VideoPlayer
+        src={media.url}
         poster={media.thumbnail}
-        aria-label={`Video: ${title}`}
-      >
-        <source src={media.url} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+        className={className}
+      />
     );
   }
 

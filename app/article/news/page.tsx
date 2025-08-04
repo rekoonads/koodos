@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import VideoPlayer from "@/components/video-player";
 import { Play, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface NewsArticle {
@@ -205,82 +206,13 @@ function PostCarousel({ articles }: { articles: NewsArticle[] }) {
 }
 
 function MediaDisplay({ media, title, className = "" }: MediaDisplayProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showPlayButton, setShowPlayButton] = useState(true);
-
   if (media.type === "video") {
-    // Check if it's a YouTube URL
-    const isYouTube = media.url.includes('youtube.com') || media.url.includes('youtu.be');
-    
-    if (isYouTube) {
-      // Extract YouTube video ID and create embed URL
-      let videoId = '';
-      if (media.url.includes('youtube.com/watch?v=')) {
-        videoId = media.url.split('v=')[1].split('&')[0];
-      } else if (media.url.includes('youtu.be/')) {
-        videoId = media.url.split('youtu.be/')[1].split('?')[0];
-      }
-      
-      if (videoId) {
-        return (
-          <div className={`relative w-full h-full ${className}`}>
-            {showPlayButton && (
-              <div 
-                className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-all duration-300 cursor-pointer z-10"
-                onClick={() => setShowPlayButton(false)}
-              >
-                <div className="group flex items-center justify-center w-20 h-20 bg-black/70 hover:bg-red-600 rounded-full transition-all duration-300 transform hover:scale-110">
-                  <Play className="h-8 w-8 text-white ml-1 group-hover:text-white transition-colors" fill="currentColor" />
-                </div>
-              </div>
-            )}
-            <iframe
-              className="w-full h-full"
-              src={`https://www.youtube.com/embed/${videoId}?rel=0&autoplay=${showPlayButton ? '0' : '1'}`}
-              title={title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        );
-      }
-    }
-    
-    // For other video formats with custom play button
     return (
-      <div className={`relative w-full h-full ${className}`}>
-        <video
-          className="w-full h-full object-cover"
-          controls
-          preload="metadata"
-          poster={media.thumbnail}
-          aria-label={`Video: ${title}`}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-        >
-          <source src={media.url} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        
-        {/* Custom Play Button Overlay */}
-        {!isPlaying && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-all duration-300">
-            <button 
-              className="group flex items-center justify-center w-20 h-20 bg-black/70 hover:bg-red-600 rounded-full transition-all duration-300 transform hover:scale-110"
-              onClick={(e) => {
-                const video = e.currentTarget.parentElement?.querySelector('video');
-                if (video) {
-                  video.play();
-                  setIsPlaying(true);
-                }
-              }}
-            >
-              <Play className="h-8 w-8 text-white ml-1 group-hover:text-white transition-colors" fill="currentColor" />
-            </button>
-          </div>
-        )}
-      </div>
+      <VideoPlayer
+        src={media.url}
+        poster={media.thumbnail}
+        className={className}
+      />
     );
   }
   return (
