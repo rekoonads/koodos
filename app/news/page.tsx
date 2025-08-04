@@ -1,50 +1,51 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PageLayout from "@/components/page-layout"
 import ArticleCard from "@/components/article-card"
 import FilterBar from "@/components/filter-bar"
 
-const newsArticles = [
-  {
-    id: "1",
-    title: "PlayStation 6 Rumors: What We Know So Far",
-    excerpt: "Latest leaks suggest Sony's next-generation console could arrive sooner than expected.",
-    image: "/placeholder.svg?height=300&width=400",
-    category: "Console",
-    author: "Gaming Insider",
-    publishedAt: "1 hour ago",
-    readTime: "4 min read",
-  },
-  {
-    id: "2",
-    title: "Microsoft Acquires Major Gaming Studio",
-    excerpt: "The tech giant continues its expansion in the gaming industry with another significant acquisition.",
-    image: "/placeholder.svg?height=300&width=400",
-    category: "Business",
-    author: "Tech Reporter",
-    publishedAt: "3 hours ago",
-    readTime: "6 min read",
-  },
-  {
-    id: "3",
-    title: "New AAA Title Announced at Gaming Conference",
-    excerpt: "Developers reveal their most ambitious project yet with stunning gameplay footage.",
-    image: "/placeholder.svg?height=300&width=400",
-    category: "Games",
-    author: "Conference Reporter",
-    publishedAt: "5 hours ago",
-    readTime: "7 min read",
-  },
-]
+interface NewsArticle {
+  id: string
+  title: string
+  excerpt: string
+  featuredImage?: string
+  category: string
+  author: string
+  createdAt: string
+  slug: string
+  views: number
+}
 
-const categories = ["Console", "PC", "Mobile", "Business", "Games", "Industry"]
+const categories = ["news", "reviews", "guides", "anime", "tech", "videos"]
 
 export default function NewsPage() {
-  const [filteredArticles, setFilteredArticles] = useState(newsArticles)
+  const [articles, setArticles] = useState<NewsArticle[]>([])
+  const [filteredArticles, setFilteredArticles] = useState<NewsArticle[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchArticles()
+  }, [])
+
+  const fetchArticles = async () => {
+    try {
+      const response = await fetch('https://admin.koodos.in/api/public/news')
+      const data = await response.json()
+      
+      if (data.success && data.data.articles) {
+        setArticles(data.data.articles)
+        setFilteredArticles(data.data.articles)
+      }
+    } catch (error) {
+      console.error('Failed to fetch articles:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSearch = (query: string) => {
-    const filtered = newsArticles.filter(
+    const filtered = articles.filter(
       (article) =>
         article.title.toLowerCase().includes(query.toLowerCase()) ||
         article.excerpt.toLowerCase().includes(query.toLowerCase()),
@@ -54,9 +55,9 @@ export default function NewsPage() {
 
   const handleCategoryFilter = (category: string) => {
     if (category === "all") {
-      setFilteredArticles(newsArticles)
+      setFilteredArticles(articles)
     } else {
-      const filtered = newsArticles.filter((article) => article.category === category)
+      const filtered = articles.filter((article) => article.category === category)
       setFilteredArticles(filtered)
     }
   }
@@ -65,9 +66,9 @@ export default function NewsPage() {
     const sorted = [...filteredArticles].sort((a, b) => {
       switch (sort) {
         case "latest":
-          return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         case "popular":
-          return Math.random() - 0.5
+          return b.views - a.views
         default:
           return 0
       }
@@ -84,11 +85,34 @@ export default function NewsPage() {
         onSortChange={handleSortChange}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredArticles.map((article) => (
-          <ArticleCard key={article.id} {...article} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-300 h-48 rounded-lg mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded mb-2"></div>
+              <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredArticles.map((article) => (
+            <ArticleCard 
+              key={article.id} 
+              id={article.id}
+              title={article.title}
+              excerpt={article.excerpt}
+              image={article.featuredImage || '/placeholder.svg'}
+              category={article.category}
+              author={article.author}
+              publishedAt={new Date(article.createdAt).toLocaleDateString()}
+              readTime="5 min read"
+              slug={article.slug}
+            />
+          ))}
+        </div>
+      )}
     </PageLayout>
   )
 }

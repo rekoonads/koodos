@@ -41,7 +41,7 @@ interface PageProps {
 async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
   try {
     const response = await fetch(
-      `http://localhost:3001/api/news?slug=${encodeURIComponent(slug)}`,
+      `https://admin.koodos.in/api/public/news/${encodeURIComponent(slug)}`,
       {
         method: "GET",
         headers: {
@@ -62,21 +62,22 @@ async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
     console.log('API Response:', result);
     
     // Handle the response structure from the admin API
-    if (result && result.id) {
+    if (result.success && result.data) {
+      const article = result.data;
       return {
-        id: result.id,
-        title: result.title,
-        excerpt: result.excerpt || '',
-        content: result.content,
-        featuredImage: result.featuredImage,
-        videoUrl: result.videoUrl,
-        category: result.category,
-        author: result.author,
-        views: result.views,
-        slug: result.slug,
-        tags: result.tags || [],
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt
+        id: article.id,
+        title: article.title,
+        excerpt: article.excerpt || '',
+        content: article.content,
+        featuredImage: article.featuredImage,
+        videoUrl: article.videoUrl,
+        category: article.category,
+        author: article.author,
+        views: article.views,
+        slug: article.slug,
+        tags: article.tags || [],
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt
       };
     }
     return null;
@@ -92,7 +93,7 @@ async function fetchRelatedArticles(
 ): Promise<NewsArticle[]> {
   try {
     const response = await fetch(
-      `http://localhost:3001/api/news?category=${encodeURIComponent(category)}&limit=3`,
+      `https://admin.koodos.in/api/public/news?category=${encodeURIComponent(category)}&limit=3`,
       {
         method: "GET",
         headers: {
@@ -107,9 +108,9 @@ async function fetchRelatedArticles(
     }
 
     const result = await response.json();
-    if (result.articles) {
+    if (result.success && result.data && result.data.articles) {
       // Transform and filter articles
-      return result.articles
+      return result.data.articles
         .filter((article: any) => article.slug !== currentSlug)
         .map((article: any) => ({
           id: article.id,
