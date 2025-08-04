@@ -13,9 +13,9 @@ import {
   Facebook,
   Twitter,
   Linkedin,
-  Play,
 } from "lucide-react";
 import { ArticleInteractions } from "@/components/article-interactions";
+import VideoPlayer from "@/components/video-player";
 
 interface NewsArticle {
   id: string;
@@ -152,76 +152,14 @@ function estimateReadTime(content: string): string {
 }
 
 function MediaDisplay({ media, title, className = "" }: { media: { type: string; url: string; thumbnail?: string }; title: string; className?: string }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showPlayButton, setShowPlayButton] = useState(true);
-
   if (media.type === "video") {
-    const isYouTube = media.url.includes('youtube.com') || media.url.includes('youtu.be');
-    
-    if (isYouTube) {
-      let videoId = '';
-      if (media.url.includes('youtube.com/watch?v=')) {
-        videoId = media.url.split('v=')[1].split('&')[0];
-      } else if (media.url.includes('youtu.be/')) {
-        videoId = media.url.split('youtu.be/')[1].split('?')[0];
-      }
-      
-      if (videoId) {
-        return (
-          <div className={`relative w-full h-full ${className}`}>
-            {showPlayButton && (
-              <div 
-                className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-all duration-300 cursor-pointer z-10"
-                onClick={() => setShowPlayButton(false)}
-              >
-                <div className="group flex items-center justify-center w-20 h-20 bg-black/70 hover:bg-red-600 rounded-full transition-all duration-300 transform hover:scale-110">
-                  <Play className="h-8 w-8 text-white ml-1 group-hover:text-white transition-colors" fill="currentColor" />
-                </div>
-              </div>
-            )}
-            <iframe
-              className="w-full h-full rounded-lg"
-              src={`https://www.youtube.com/embed/${videoId}?rel=0&autoplay=${showPlayButton ? '0' : '1'}`}
-              title={title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        );
-      }
-    }
-    
     return (
-      <div className={`relative w-full h-full ${className}`}>
-        <video
-          className="w-full h-full object-cover rounded-lg"
-          controls
-          preload="metadata"
-          poster={media.thumbnail}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-        >
-          <source src={media.url} type="video/mp4" />
-        </video>
-        
-        {!isPlaying && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-all duration-300">
-            <button 
-              className="group flex items-center justify-center w-20 h-20 bg-black/70 hover:bg-red-600 rounded-full transition-all duration-300 transform hover:scale-110"
-              onClick={(e) => {
-                const video = e.currentTarget.parentElement?.querySelector('video');
-                if (video) {
-                  video.play();
-                  setIsPlaying(true);
-                }
-              }}
-            >
-              <Play className="h-8 w-8 text-white ml-1 group-hover:text-white transition-colors" fill="currentColor" />
-            </button>
-          </div>
-        )}
-      </div>
+      <VideoPlayer
+        src={media.url}
+        poster={media.thumbnail}
+        title={title}
+        className={className}
+      />
     );
   }
   
