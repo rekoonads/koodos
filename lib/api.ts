@@ -1,5 +1,5 @@
 // For your koodos.in website - lib/api.ts
-const API_BASE_URL = "https://admindash-pi-three.vercel.app/api/public";
+const API_BASE_URL = "https://admin.koodos.in/api/public";
 
 export interface NewsArticle {
   id: string;
