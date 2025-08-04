@@ -114,11 +114,19 @@ export default function ReviewsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredReviews.map((review) => (
-          <ReviewCard key={review.id} {...review} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-800 rounded-lg h-80" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredReviews.map((review) => (
+            <ReviewCard key={review.id} {...review} />
+          ))}
+        </div>
+      )}
     </PageLayout>
   )
 }

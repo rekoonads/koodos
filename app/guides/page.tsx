@@ -126,11 +126,19 @@ export default function GuidesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredGuides.map((guide) => (
-          <GuideCard key={guide.id} {...guide} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-gray-800 rounded-lg h-80" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredGuides.map((guide) => (
+            <GuideCard key={guide.id} {...guide} />
+          ))}
+        </div>
+      )}
     </PageLayout>
   )
 }

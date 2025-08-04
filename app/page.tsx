@@ -1,104 +1,38 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
-const featuredArticles = [
-  {
-    id: "1",
-    title:
-      "PlayStation 5: Sony Is Reportedly Going To Increase the Prices of Its First-Party Games in India",
-    media: {
-      type: "video" as const,
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Gaming",
-  },
-  {
-    id: "2",
-    title:
-      "Nintendo Switch 2 Should Reportedly Be Available in India Through Unofficial Channels From June 8",
-    media: {
-      type: "image" as const,
-      url: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Gaming",
-  },
-  {
-    id: "3",
-    title:
-      "GDC 2025: The Indian Video Games Industry Was Represented by... Real-Money Gaming Again",
-    media: {
-      type: "video" as const,
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Industry",
-  },
-];
-
-const articles = [
-  {
-    id: "1",
-    title: "The Future of Gaming: AI and Machine Learning Revolution",
-    excerpt:
-      "How artificial intelligence is transforming game development and player experiences.",
-    media: {
-      type: "video" as const,
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Technology",
-    author: "Tech Expert",
-    publishedAt: "2 hours ago",
-    readTime: "8 min read",
-  },
-  {
-    id: "2",
-    title: "Indie Game Spotlight: Hidden Gems You Need to Play",
-    excerpt:
-      "Discover amazing independent games that are pushing creative boundaries.",
-    media: {
-      type: "image" as const,
-      url: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Indie",
-    author: "Indie Curator",
-    publishedAt: "4 hours ago",
-    readTime: "12 min read",
-  },
-  {
-    id: "3",
-    title: "Esports in India: The Rise of Professional Gaming",
-    excerpt:
-      "From PUBG Mobile to Valorant, Indian esports is gaining international recognition.",
-    media: {
-      type: "video" as const,
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Esports",
-    author: "Esports Reporter",
-    publishedAt: "6 hours ago",
-    readTime: "10 min read",
-  },
-  {
-    id: "4",
-    title: "Next-Gen Console Wars: Performance Analysis",
-    excerpt:
-      "Comparing the latest gaming consoles and their impact on the industry.",
-    media: {
-      type: "image" as const,
-      url: "/placeholder.svg?height=300&width=400",
-    },
-    category: "Hardware",
-    author: "Hardware Reviewer",
-    publishedAt: "8 hours ago",
-    readTime: "15 min read",
-  },
-];
+async function fetchLatestArticles() {
+  try {
+    const response = await fetch('https://admin.koodos.in/api/public/news?limit=8')
+    const result = await response.json()
+    
+    if (result.success && result.data && result.data.articles) {
+      return result.data.articles.map((article: any) => ({
+        id: article.id,
+        title: article.title,
+        excerpt: article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...',
+        media: {
+          type: article.featuredImage && (article.featuredImage.includes('youtube') || article.featuredImage.includes('.mp4')) ? 'video' as const : 'image' as const,
+          url: article.featuredImage || '/placeholder.svg',
+          thumbnail: article.featuredImage || '/placeholder.svg'
+        },
+        category: article.category || 'Gaming',
+        author: article.author,
+        publishedAt: new Date(article.createdAt).toLocaleDateString(),
+        readTime: '5 min read',
+        slug: article.slug
+      }))
+    }
+    return []
+  } catch (error) {
+    console.error('Failed to fetch articles:', error)
+    return []
+  }
+}
 
 interface MediaDisplayProps {
   media: {
@@ -137,6 +71,20 @@ function MediaDisplay({ media, title, className = "" }: MediaDisplayProps) {
 }
 
 export default function Home() {
+  const [articles, setArticles] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadArticles() {
+      const data = await fetchLatestArticles()
+      setArticles(data)
+      setLoading(false)
+    }
+    loadArticles()
+  }, [])
+
+  const featuredArticles = articles.slice(0, 3)
+  const latestArticles = articles.slice(3, 7)
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -178,46 +126,53 @@ export default function Home() {
       {/* Main Featured Story */}
       <section className="px-4 lg:px-8 py-6 lg:py-8 border-b">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="relative h-64 lg:h-80 overflow-hidden rounded-lg"
-          >
-            <MediaDisplay
-              media={featuredArticles[0].media}
-              title={featuredArticles[0].title}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
-              <span className="bg-white text-black px-3 py-1 text-xs font-bold rounded mb-3 inline-block">
-                FEATURED
-              </span>
-              <h2 className="text-white font-bold text-lg lg:text-2xl leading-tight">
-                {featuredArticles[0].title}
-              </h2>
-            </div>
-          </motion.div>
-          <div className="space-y-4">
-            {featuredArticles.slice(1).map((article, index) => (
+          {featuredArticles.length > 0 ? (
+            <Link href={`/article/news/${featuredArticles[0].slug}`}>
               <motion.div
-                key={article.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                className="relative h-64 lg:h-80 overflow-hidden rounded-lg cursor-pointer"
               >
-                <div className="relative w-20 h-14 lg:w-24 lg:h-16 flex-shrink-0 overflow-hidden rounded">
-                  <MediaDisplay media={article.media} title={article.title} />
-                </div>
-                <div className="flex-1">
-                  <span className="text-black text-xs font-semibold uppercase">
-                    {article.category}
+                <MediaDisplay
+                  media={featuredArticles[0].media}
+                  title={featuredArticles[0].title}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
+                  <span className="bg-white text-black px-3 py-1 text-xs font-bold rounded mb-3 inline-block">
+                    FEATURED
                   </span>
-                  <h3 className="text-gray-900 font-semibold text-xs lg:text-sm leading-tight mt-1">
-                    {article.title}
-                  </h3>
+                  <h2 className="text-white font-bold text-lg lg:text-2xl leading-tight">
+                    {featuredArticles[0].title}
+                  </h2>
                 </div>
               </motion.div>
+            </Link>
+          ) : (
+            <div className="relative h-64 lg:h-80 bg-gray-200 rounded-lg animate-pulse" />
+          )}
+          <div className="space-y-4">
+            {featuredArticles.slice(1).map((article, index) => (
+              <Link key={article.id} href={`/article/news/${article.slug}`}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                >
+                  <div className="relative w-20 h-14 lg:w-24 lg:h-16 flex-shrink-0 overflow-hidden rounded">
+                    <MediaDisplay media={article.media} title={article.title} />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-black text-xs font-semibold uppercase">
+                      {article.category}
+                    </span>
+                    <h3 className="text-gray-900 font-semibold text-xs lg:text-sm leading-tight mt-1">
+                      {article.title}
+                    </h3>
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -233,8 +188,8 @@ export default function Home() {
           Latest News
         </motion.h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {articles.map((article, index) => (
-            <Link key={article.id} href={`/post/future-of-gaming-2024`}>
+          {latestArticles.map((article, index) => (
+            <Link key={article.id} href={`/article/news/${article.slug}`}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}

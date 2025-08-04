@@ -95,7 +95,7 @@ export default function NewsPage() {
             </div>
           ))}
         </div>
-      ) : (
+      ) : filteredArticles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredArticles.map((article) => (
             <ArticleCard 
@@ -111,6 +111,10 @@ export default function NewsPage() {
               slug={article.slug}
             />
           ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gray-600">No articles found. Check back later for updates!</p>
         </div>
       )}
     </PageLayout>
