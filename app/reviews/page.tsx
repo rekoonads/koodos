@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PageLayout from "@/components/page-layout"
 import { Star } from "lucide-react"
 import Image from "next/image"
@@ -15,11 +15,12 @@ interface ReviewCardProps {
   rating: number
   author: string
   publishedAt: string
+  slug?: string
 }
 
-function ReviewCard({ id, title, excerpt, image, category, rating, author, publishedAt }: ReviewCardProps) {
+function ReviewCard({ id, title, excerpt, image, category, rating, author, publishedAt, slug }: ReviewCardProps) {
   return (
-    <Link href={`/reviews/${id}`}>
+    <Link href={`/article/review/${slug || id}`}>
       <article className="group cursor-pointer bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition-colors">
         <div className="relative h-48">
           <Image
@@ -51,41 +52,44 @@ function ReviewCard({ id, title, excerpt, image, category, rating, author, publi
   )
 }
 
-const reviews = [
-  {
-    id: "1",
-    title: "Cyberpunk 2077: Phantom Liberty Review",
-    excerpt: "CD Projekt RED's expansion finally delivers on the original game's promise with stellar storytelling.",
-    image: "/placeholder.svg?height=300&width=400",
-    category: "Game Review",
-    rating: 8.5,
-    author: "Alex Chen",
-    publishedAt: "2 days ago",
-  },
-  {
-    id: "2",
-    title: "Spider-Man: Across the Spider-Verse Review",
-    excerpt: "A visual masterpiece that pushes animation to new heights while delivering an emotional story.",
-    image: "/placeholder.svg?height=300&width=400",
-    category: "Movie Review",
-    rating: 9.2,
-    author: "Sarah Johnson",
-    publishedAt: "1 week ago",
-  },
-  {
-    id: "3",
-    title: "The Last of Us HBO Series Review",
-    excerpt: "HBO's adaptation successfully translates the beloved game into compelling television.",
-    image: "/placeholder.svg?height=300&width=400",
-    category: "TV Review",
-    rating: 8.8,
-    author: "Mike Rodriguez",
-    publishedAt: "3 days ago",
-  },
-]
+async function fetchReviews() {
+  try {
+    const response = await fetch('https://admin.koodos.in/api/public/news?category=reviews')
+    const result = await response.json()
+    
+    if (result.success && result.data && result.data.articles) {
+      return result.data.articles.map((article: any) => ({
+        id: article.id,
+        title: article.title,
+        excerpt: article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
+        image: article.featuredImage || '/placeholder.svg',
+        category: 'Game Review',
+        rating: article.reviewScore || 8.0,
+        author: article.author,
+        publishedAt: new Date(article.createdAt).toLocaleDateString(),
+        slug: article.slug
+      }))
+    }
+    return []
+  } catch (error) {
+    console.error('Failed to fetch reviews:', error)
+    return []
+  }
+}
 
 export default function ReviewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [reviews, setReviews] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadReviews() {
+      const data = await fetchReviews()
+      setReviews(data)
+      setLoading(false)
+    }
+    loadReviews()
+  }, [])
 
   const filteredReviews =
     selectedCategory === "all"

@@ -27,7 +27,7 @@ interface NewsArticle {
 async function fetchNews(): Promise<NewsArticle[]> {
   try {
     const response = await fetch(
-      "http://localhost:3001/api/news?category=news&limit=10",
+      "https://admin.koodos.in/api/public/news?category=news&limit=10",
       {
         method: "GET",
         headers: {
@@ -46,9 +46,9 @@ async function fetchNews(): Promise<NewsArticle[]> {
     console.log('Articles array:', result?.articles);
     console.log('Is articles array?', Array.isArray(result?.articles));
     
-    if (result && result.articles && Array.isArray(result.articles)) {
+    if (result.success && result.data && result.data.articles && Array.isArray(result.data.articles)) {
       // Transform database posts to match the NewsArticle interface
-      const posts = result.articles;
+      const posts = result.data.articles;
       console.log('Processing', posts.length, 'articles');
       return posts.map((post: any) => ({
         id: post.id,

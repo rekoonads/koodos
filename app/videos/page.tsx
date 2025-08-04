@@ -1,7 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import PageLayout from "@/components/page-layout"
 import Image from "next/image"
+import Link from "next/link"
 import { Play, Clock, Eye } from "lucide-react"
 import VideoPlayer from "@/components/video-player"
 
@@ -13,11 +15,13 @@ interface VideoCardProps {
   views: string
   publishedAt: string
   category: string
+  slug?: string
 }
 
-function VideoCard({ id, title, thumbnail, duration, views, publishedAt, category }: VideoCardProps) {
+function VideoCard({ id, title, thumbnail, duration, views, publishedAt, category, slug }: VideoCardProps) {
   return (
-    <div className="group cursor-pointer">
+    <Link href={`/article/video/${slug || id}`}>
+      <div className="group cursor-pointer">
       <div className="relative rounded-lg overflow-hidden mb-3">
         <Image
           src={thumbnail || "/placeholder.svg"}
@@ -45,41 +49,48 @@ function VideoCard({ id, title, thumbnail, duration, views, publishedAt, categor
           <span>{publishedAt}</span>
         </div>
       </div>
-    </div>
+      </div>
+    </Link>
   )
 }
 
-const videos = [
-  {
-    id: "1",
-    title: "Cyberpunk 2077 Phantom Liberty - Full Review",
-    thumbnail: "/placeholder.svg?height=225&width=400",
-    duration: "15:32",
-    views: "125K views",
-    publishedAt: "2 days ago",
-    category: "Review",
-  },
-  {
-    id: "2",
-    title: "Top 10 Games of 2024 So Far",
-    thumbnail: "/placeholder.svg?height=225&width=400",
-    duration: "22:15",
-    views: "89K views",
-    publishedAt: "1 week ago",
-    category: "Top 10",
-  },
-  {
-    id: "3",
-    title: "PlayStation 6 Rumors and Speculation",
-    thumbnail: "/placeholder.svg?height=225&width=400",
-    duration: "12:45",
-    views: "67K views",
-    publishedAt: "3 days ago",
-    category: "News",
-  },
-]
+async function fetchVideos() {
+  try {
+    const response = await fetch('https://admin.koodos.in/api/public/news?category=videos')
+    const result = await response.json()
+    
+    if (result.success && result.data && result.data.articles) {
+      return result.data.articles.map((article: any) => ({
+        id: article.id,
+        title: article.title,
+        thumbnail: article.featuredImage || '/placeholder.svg',
+        duration: '10:00',
+        views: `${article.views || 0} views`,
+        publishedAt: new Date(article.createdAt).toLocaleDateString(),
+        category: 'Video',
+        slug: article.slug
+      }))
+    }
+    return []
+  } catch (error) {
+    console.error('Failed to fetch videos:', error)
+    return []
+  }
+}
 
 export default function VideosPage() {
+  const [videos, setVideos] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadVideos() {
+      const data = await fetchVideos()
+      setVideos(data)
+      setLoading(false)
+    }
+    loadVideos()
+  }, [])
+
   return (
     <PageLayout title="Videos" description="Watch the latest gaming videos, reviews, and gameplay footage">
       <div className="mb-8">

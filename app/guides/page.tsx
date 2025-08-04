@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PageLayout from "@/components/page-layout"
 import Image from "next/image"
 import Link from "next/link"
@@ -17,7 +17,7 @@ interface GuideCardProps {
   author: string
 }
 
-function GuideCard({ id, title, description, thumbnail, difficulty, estimatedTime, game, author }: GuideCardProps) {
+function GuideCard({ id, title, description, thumbnail, difficulty, estimatedTime, game, author, slug }: GuideCardProps & { slug?: string }) {
   const difficultyColors = {
     Beginner: "bg-green-600",
     Intermediate: "bg-yellow-600",
@@ -25,7 +25,7 @@ function GuideCard({ id, title, description, thumbnail, difficulty, estimatedTim
   }
 
   return (
-    <Link href={`/guides/${id}`}>
+    <Link href={`/article/guide/${slug || id}`}>
       <article className="group cursor-pointer bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition-colors">
         <div className="relative h-48">
           <Image
@@ -62,41 +62,44 @@ function GuideCard({ id, title, description, thumbnail, difficulty, estimatedTim
   )
 }
 
-const guides = [
-  {
-    id: "1",
-    title: "Complete Beginner's Guide to Elden Ring",
-    description: "Everything you need to know to start your journey in the Lands Between.",
-    thumbnail: "/placeholder.svg?height=300&width=400",
-    difficulty: "Beginner" as const,
-    estimatedTime: "30 min read",
-    game: "Elden Ring",
-    author: "Souls Expert",
-  },
-  {
-    id: "2",
-    title: "Advanced Combat Techniques in Street Fighter 6",
-    description: "Master frame data, combos, and advanced strategies for competitive play.",
-    thumbnail: "/placeholder.svg?height=300&width=400",
-    difficulty: "Advanced" as const,
-    estimatedTime: "45 min read",
-    game: "Street Fighter 6",
-    author: "FGC Pro",
-  },
-  {
-    id: "3",
-    title: "Building Your First PC for Gaming",
-    description: "Step-by-step guide to assembling a gaming PC on any budget.",
-    thumbnail: "/placeholder.svg?height=300&width=400",
-    difficulty: "Intermediate" as const,
-    estimatedTime: "25 min read",
-    game: "PC Building",
-    author: "Hardware Guide",
-  },
-]
+async function fetchGuides() {
+  try {
+    const response = await fetch('https://admin.koodos.in/api/public/news?category=guides')
+    const result = await response.json()
+    
+    if (result.success && result.data && result.data.articles) {
+      return result.data.articles.map((article: any) => ({
+        id: article.id,
+        title: article.title,
+        description: article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...',
+        thumbnail: article.featuredImage || '/placeholder.svg',
+        difficulty: 'Beginner' as const,
+        estimatedTime: '15 min read',
+        game: 'Gaming',
+        author: article.author,
+        slug: article.slug
+      }))
+    }
+    return []
+  } catch (error) {
+    console.error('Failed to fetch guides:', error)
+    return []
+  }
+}
 
 export default function GuidesPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState("all")
+  const [guides, setGuides] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadGuides() {
+      const data = await fetchGuides()
+      setGuides(data)
+      setLoading(false)
+    }
+    loadGuides()
+  }, [])
 
   const filteredGuides =
     selectedDifficulty === "all"
