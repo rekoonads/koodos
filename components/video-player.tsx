@@ -1,172 +1,161 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react"
 
 interface VideoPlayerProps {
   src: string
   poster?: string
   className?: string
-  type?: 'video' | 'youtube'
+  title?: string
 }
 
-function extractYouTubeId(url: string): string | null {
+function getVideoId(url: string): string | null {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)
   return match ? match[1] : null
 }
 
-export default function VideoPlayer({ src, poster, className = "", type = 'video' }: VideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const playerRef = useRef<any>(null)
-  const [isClient, setIsClient] = useState(false)
+export default function VideoPlayer({ src, poster, className = "", title }: VideoPlayerProps) {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [showControls, setShowControls] = useState(true)
+  const [isMuted, setIsMuted] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  const isYouTube = src.includes('youtube.com') || src.includes('youtu.be')
+  const videoId = isYouTube ? getVideoId(src) : null
 
-  useEffect(() => {
-    if (isClient && videoRef.current && !playerRef.current) {
-      import('plyr').then((Plyr) => {
-        const isYouTube = type === 'youtube' || src.includes('youtube.com') || src.includes('youtu.be')
-        
-        if (isYouTube) {
-          const videoId = extractYouTubeId(src)
-          if (videoId) {
-            playerRef.current = new Plyr.default(videoRef.current!, {
-              controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'settings', 'fullscreen'],
-              settings: ['quality', 'speed'],
-              hideYouTubeDOMError: true,
-              youtube: {
-                noCookie: true,
-                rel: 0,
-                showinfo: 0,
-                iv_load_policy: 3,
-                modestbranding: 1
-              }
-            })
-          }
-        } else {
-          playerRef.current = new Plyr.default(videoRef.current!, {
-            controls: [
-              'play-large',
-              'play',
-              'progress',
-              'current-time',
-              'duration',
-              'mute',
-              'volume',
-              'settings',
-              'fullscreen'
-            ],
-            settings: ['quality', 'speed'],
-            quality: {
-              default: 720,
-              options: [1080, 720, 480, 360]
-            },
-            speed: {
-              selected: 1,
-              options: [0.5, 0.75, 1, 1.25, 1.5, 2]
-            }
-          })
-        }
-      })
+  const handlePlay = () => {
+    if (iframeRef.current && videoId) {
+      iframeRef.current.contentWindow?.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        '*'
+      )
+      setIsPlaying(true)
     }
+  }
 
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.destroy()
-        playerRef.current = null
+  const handlePause = () => {
+    if (iframeRef.current && videoId) {
+      iframeRef.current.contentWindow?.postMessage(
+        '{"event":"command","func":"pauseVideo","args":""}',
+        '*'
+      )
+      setIsPlaying(false)
+    }
+  }
+
+  const toggleMute = () => {
+    if (iframeRef.current && videoId) {
+      const command = isMuted ? 'unMute' : 'mute'
+      iframeRef.current.contentWindow?.postMessage(
+        `{"event":"command","func":"${command}","args":""}`,
+        '*'
+      )
+      setIsMuted(!isMuted)
+    }
+  }
+
+  const toggleFullscreen = () => {
+    if (containerRef.current) {
+      if (!isFullscreen) {
+        containerRef.current.requestFullscreen()
+      } else {
+        document.exitFullscreen()
       }
+      setIsFullscreen(!isFullscreen)
     }
-  }, [isClient, src, type])
+  }
 
-  if (!isClient) {
+  if (!isYouTube || !videoId) {
     return (
       <div className={`bg-gray-900 rounded-lg aspect-video flex items-center justify-center ${className}`}>
-        <div className="text-white">Loading player...</div>
+        <video
+          className="w-full h-full object-cover rounded-lg"
+          controls
+          poster={poster}
+          src={src}
+        />
       </div>
     )
   }
 
-  const isYouTube = type === 'youtube' || src.includes('youtube.com') || src.includes('youtu.be')
-  const videoId = isYouTube ? extractYouTubeId(src) : null
-
   return (
-    <div className={`plyr-container ${className}`}>
-      {isYouTube && videoId ? (
-        <div
-          ref={videoRef}
-          data-plyr-provider="youtube"
-          data-plyr-embed-id={videoId}
-          className="plyr-video"
-        />
-      ) : (
-        <video
-          ref={videoRef}
-          className="plyr-video"
-          poster={poster}
-          controls
-          crossOrigin="anonymous"
-        >
-          <source src={src} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      )}
+    <div 
+      ref={containerRef}
+      className={`relative bg-black rounded-lg overflow-hidden aspect-video ${className}`}
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
+    >
+      <iframe
+        ref={iframeRef}
+        className="w-full h-full"
+        src={`https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&playsinline=1&origin=${typeof window !== 'undefined' ? window.location.origin : ''}`}
+        title={title || 'Video'}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen={false}
+      />
       
-      <style jsx global>{`
-        @import url('https://cdn.plyr.io/3.7.8/plyr.css');
+      {/* Custom Controls Overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Play/Pause Button */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <button
+            onClick={isPlaying ? handlePause : handlePlay}
+            className="bg-black/70 hover:bg-black/90 rounded-full p-4 transition-all duration-200 transform hover:scale-110"
+          >
+            {isPlaying ? (
+              <Pause className="w-8 h-8 text-white fill-white" />
+            ) : (
+              <Play className="w-8 h-8 text-white fill-white ml-1" />
+            )}
+          </button>
+        </div>
         
-        .plyr-container {
-          --plyr-color-main: #000000;
-          --plyr-video-background: #000000;
-          --plyr-menu-background: rgba(0, 0, 0, 0.9);
-          --plyr-menu-color: #ffffff;
-          --plyr-control-icon-size: 18px;
-          --plyr-control-spacing: 10px;
-          --plyr-progress-loading-background: rgba(255, 255, 255, 0.25);
-          --plyr-progress-buffer-background: rgba(255, 255, 255, 0.25);
-          --plyr-progress-played-background: #000000;
-          --plyr-range-thumb-background: #000000;
-          --plyr-range-track-background: rgba(255, 255, 255, 0.25);
-          --plyr-range-fill-background: #000000;
-        }
-        
-        .plyr {
-          border-radius: 8px;
-          overflow: hidden;
-        }
-        
-        .plyr__controls {
-          background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-          border-radius: 0 0 8px 8px;
-        }
-        
-        .plyr__control:hover {
-          background: rgba(0, 0, 0, 0.8);
-        }
-        
-        .plyr__control--pressed {
-          background: rgba(0, 0, 0, 0.9);
-          color: #ffffff;
-        }
-        
-        .plyr__menu {
-          border-radius: 8px;
-        }
-        
-        .plyr__tooltip {
-          background: rgba(0, 0, 0, 0.9);
-          border-radius: 4px;
-          color: #ffffff;
-        }
-        
-        .plyr--youtube .plyr__video-embed {
-          background: #000;
-        }
-        
-        .plyr__video-embed iframe {
-          border-radius: 8px;
-        }
-      `}</style>
+        {/* Bottom Controls */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={isPlaying ? handlePause : handlePlay}
+                className="text-white hover:text-gray-300 transition-colors"
+              >
+                {isPlaying ? (
+                  <Pause className="w-5 h-5 fill-white" />
+                ) : (
+                  <Play className="w-5 h-5 fill-white" />
+                )}
+              </button>
+              
+              <button
+                onClick={toggleMute}
+                className="text-white hover:text-gray-300 transition-colors"
+              >
+                {isMuted ? (
+                  <VolumeX className="w-5 h-5" />
+                ) : (
+                  <Volume2 className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+            
+            <button
+              onClick={toggleFullscreen}
+              className="text-white hover:text-gray-300 transition-colors"
+            >
+              <Maximize className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {title && (
+        <div className="absolute top-4 left-4 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium">
+          {title}
+        </div>
+      )}
     </div>
   )
 }
