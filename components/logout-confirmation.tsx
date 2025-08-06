@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useClerk } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
+import { clearAuthCache } from "@/lib/auth-utils"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,10 +27,18 @@ export function LogoutConfirmation({ isOpen, onClose }: LogoutConfirmationProps)
   const handleLogout = async () => {
     setIsLoading(true)
     try {
+      // Clear authentication cache first
+      clearAuthCache()
+      // Sign out from Clerk
       await signOut()
       onClose()
+      // Force page reload to ensure clean state
+      window.location.href = '/'
     } catch (error) {
       console.error("Logout error:", error)
+      // Even if sign out fails, clear cache and redirect
+      clearAuthCache()
+      window.location.href = '/'
     } finally {
       setIsLoading(false)
     }
