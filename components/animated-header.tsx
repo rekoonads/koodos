@@ -162,7 +162,9 @@ export default function AnimatedHeader() {
                             <div className="p-6 text-center">
                               <Bell className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                               <p className="text-gray-600 mb-4">Sign in to view notifications</p>
-                              <Link href="/sign-in" className="text-blue-600 hover:text-blue-700 font-medium">Sign In</Link>
+                              <SignInButton mode="modal">
+                                <button className="text-blue-600 hover:text-blue-700 font-medium">Sign In</button>
+                              </SignInButton>
                             </div>
                           )}
                         </motion.div>
@@ -263,15 +265,13 @@ export default function AnimatedHeader() {
                         transition={{ duration: 0.15 }}
                         className="absolute right-0 top-12 w-64 max-w-[calc(100vw-2rem)] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden"
                       >
-                        <div className="p-4 space-y-3">
-                          <Link href="/sign-in" onClick={() => setIsProfileOpen(false)} className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            <User className="w-4 h-4" />
-                            <span>Sign In</span>
-                          </Link>
-                          <Link href="/sign-up" onClick={() => setIsProfileOpen(false)} className="flex items-center justify-center gap-2 w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
-                            <User className="w-4 h-4" />
-                            <span>Sign Up</span>
-                          </Link>
+                        <div className="p-4">
+                          <SignInButton mode="modal">
+                            <button onClick={() => setIsProfileOpen(false)} className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                              <User className="w-4 h-4" />
+                              <span>Sign In</span>
+                            </button>
+                          </SignInButton>
                         </div>
                       </motion.div>
                     </>

@@ -1,20 +1,12 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useUser } from "@clerk/nextjs"
+import { useUser, SignInButton } from "@clerk/nextjs"
 import { useState, useEffect } from "react"
 import { User, Mail, Phone, MapPin, Save } from "lucide-react"
-import { useRouter } from "next/navigation"
 
 export default function ProfileSettings() {
   const { user, isSignedIn, isLoaded } = useUser()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push('/sign-in')
-    }
-  }, [isLoaded, isSignedIn, router])
 
   if (!isLoaded) {
     return (
@@ -28,8 +20,32 @@ export default function ProfileSettings() {
   }
 
   if (!isSignedIn) {
-    return null
+    return (
+      <div className="min-h-screen bg-white">
+        <section className="bg-gradient-to-r from-green-600 to-green-800 text-white py-8 lg:py-12">
+          <div className="px-4 lg:px-8">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-2xl lg:text-4xl font-bold mb-2 lg:mb-4"
+            >
+              Sign In Required
+            </motion.h1>
+            <p className="text-sm lg:text-xl opacity-90">Please sign in to access settings</p>
+          </div>
+        </section>
+        <section className="px-4 lg:px-8 py-6 lg:py-8 text-center">
+          <SignInButton mode="modal">
+            <button className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 text-lg">
+              Sign In
+            </button>
+          </SignInButton>
+        </section>
+      </div>
+    )
   }
+
+
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',

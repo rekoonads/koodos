@@ -1,20 +1,11 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useUser } from "@clerk/nextjs"
+import { useUser, SignInButton } from "@clerk/nextjs"
 import { Crown, Check, Star, Calendar, CreditCard } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
 
 export default function Membership() {
   const { user, isSignedIn, isLoaded } = useUser()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push('/sign-in')
-    }
-  }, [isLoaded, isSignedIn, router])
 
   if (!isLoaded) {
     return (
@@ -28,8 +19,32 @@ export default function Membership() {
   }
 
   if (!isSignedIn) {
-    return null
+    return (
+      <div className="min-h-screen bg-white">
+        <section className="bg-gradient-to-r from-purple-600 to-purple-800 text-white py-8 lg:py-12">
+          <div className="px-4 lg:px-8">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-2xl lg:text-4xl font-bold mb-2 lg:mb-4"
+            >
+              Sign In Required
+            </motion.h1>
+            <p className="text-sm lg:text-xl opacity-90">Please sign in to access membership</p>
+          </div>
+        </section>
+        <section className="px-4 lg:px-8 py-6 lg:py-8 text-center">
+          <SignInButton mode="modal">
+            <button className="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 text-lg">
+              Sign In
+            </button>
+          </SignInButton>
+        </section>
+      </div>
+    )
   }
+
+
 
   const plans = [
     {
