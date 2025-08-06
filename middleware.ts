@@ -1,9 +1,14 @@
-import { authMiddleware } from "@clerk/nextjs";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export default authMiddleware({
-  publicRoutes: ["/", "/about", "/anime", "/careers", "/comics", "/cookies", "/cosplay", "/esports", "/features", "/gaming", "/guides", "/india", "/interviews", "/lists", "/mobile", "/more", "/news", "/nintendo-switch", "/opinions", "/pc", "/privacy", "/ps5", "/reviews", "/science", "/science-1", "/tech", "/terms", "/videos", "/wiki", "/xbox", "/article", "/post", "/api", "/test-notifications"]
+const isProtectedRoute = createRouteMatcher(['/profile(.*)']);
+
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) auth().protect();
 });
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
+  ],
 };
