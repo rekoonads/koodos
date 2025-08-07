@@ -21,6 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8067460650189485" crossOrigin="anonymous"></script>
+      </head>
       <body className={`${inter.className} bg-white text-gray-900`} suppressHydrationWarning={true}>
         <ErrorBoundary>
           <ClientClerkProvider>
