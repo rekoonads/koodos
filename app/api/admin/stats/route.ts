@@ -9,9 +9,9 @@ export async function GET() {
     ])
 
     const totalArticles = articles.length
-    const publishedArticles = articles.filter(a => a.status === 'PUBLISHED').length
-    const draftArticles = articles.filter(a => a.status === 'DRAFT').length
-    const totalViews = articles.reduce((sum, a) => sum + (a.views || 0), 0)
+    const publishedArticles = articles.filter((a: any) => a.status === 'PUBLISHED').length
+    const draftArticles = articles.filter((a: any) => a.status === 'DRAFT').length
+    const totalViews = articles.reduce((sum: number, a: any) => sum + (a.views || 0), 0)
 
     return NextResponse.json({
       totalArticles,
