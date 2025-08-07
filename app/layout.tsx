@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import LayoutWrapper from "@/components/layout-wrapper"
 import ClientClerkProvider from "@/components/clerk-provider"
+import ErrorBoundary from "@/components/error-boundary"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,12 +21,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-white text-gray-900`}>
-        <ClientClerkProvider>
-          <LayoutWrapper>
-            {children}
-          </LayoutWrapper>
-        </ClientClerkProvider>
+      <body className={`${inter.className} bg-white text-gray-900`} suppressHydrationWarning={true}>
+        <ErrorBoundary>
+          <ClientClerkProvider>
+            <LayoutWrapper>
+              {children}
+            </LayoutWrapper>
+          </ClientClerkProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

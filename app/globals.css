@@ -265,3 +265,9 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Suppress bis_skin_checked hydration warnings */
+[bis_skin_checked] {
+  /* This attribute is added by browser extensions and causes hydration mismatches */
+  /* We suppress it to prevent console warnings */
+}
