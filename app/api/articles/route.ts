@@ -1,74 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  
   const { searchParams } = new URL(request.url)
   const page = parseInt(searchParams.get('page') || '1')
   const limit = parseInt(searchParams.get('limit') || '10')
   const category = searchParams.get('category')
-  const status = searchParams.get('status') || 'published'
+  const status = searchParams.get('status') || 'PUBLISHED'
   
-  let query = supabase
-    .from('articles')
-    .select(`
-      *,
-      author:users(username, email),
-      category:categories(name, slug),
-      tags:article_tags(tag:tags(name, slug))
-    `)
-    .eq('status', status)
-    .order('created_at', { ascending: false })
-    .range((page - 1) * limit, page * limit - 1)
+  try {
+    const articles = await prisma.article.findMany({
+      where: {
+        status: status as any,
+        ...(category && { category: { slug: category } })
+      },
+      include: {
+        author: { select: { name: true, email: true } },
+        category: { select: { name: true, slug: true } },
+        tags: { select: { name: true, slug: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit
+    })
 
-  if (category) {
-    query = query.eq('categories.slug', category)
+    return NextResponse.json({ articles, page, limit })
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 })
   }
-
-  const { data: articles, error } = await query
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ articles, page, limit })
 }
 
 export async function POST(request: NextRequest) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  try {
+    const body = await request.json()
+    const { title, content, excerpt, categoryId, status = 'DRAFT', authorId } = body
 
-  const body = await request.json()
-  const { title, content, excerpt, category_id, tags, status = 'draft' } = body
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-
-  const { data: article, error } = await supabase
-    .from('articles')
-    .insert({
-      title,
-      slug,
-      content,
-      excerpt,
-      category_id,
-      status,
-      author_id: user.id
+    const article = await prisma.article.create({
+      data: {
+        title,
+        slug,
+        content,
+        excerpt,
+        categoryId,
+        status: status as any,
+        authorId
+      },
+      include: {
+        author: { select: { name: true, email: true } },
+        category: { select: { name: true, slug: true } }
+      }
     })
-    .select()
-    .single()
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ article }, { status: 201 })
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to create article' }, { status: 500 })
   }
-
-  return NextResponse.json({ article }, { status: 201 })
 }

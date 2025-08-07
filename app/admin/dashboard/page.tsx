@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@/utils/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -29,27 +28,10 @@ export default function AdminDashboard() {
   }, [])
 
   const fetchStats = async () => {
-    const supabase = createClient()
-    
     try {
-      // Get article stats
-      const { data: articles } = await supabase.from('articles').select('status, views')
-      const { data: comments } = await supabase.from('comments').select('id')
-      
-      if (articles) {
-        const totalArticles = articles.length
-        const publishedArticles = articles.filter(a => a.status === 'published').length
-        const draftArticles = articles.filter(a => a.status === 'draft').length
-        const totalViews = articles.reduce((sum, a) => sum + (a.views || 0), 0)
-        
-        setStats({
-          totalArticles,
-          publishedArticles,
-          draftArticles,
-          totalComments: comments?.length || 0,
-          totalViews
-        })
-      }
+      const response = await fetch('/api/admin/stats')
+      const data = await response.json()
+      setStats(data)
     } catch (error) {
       console.error('Error fetching stats:', error)
     } finally {
