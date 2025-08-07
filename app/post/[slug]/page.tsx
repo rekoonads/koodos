@@ -85,8 +85,9 @@ const getPostData = (slug: string): PostData => {
   }
 }
 
-export default function PostPage({ params }: { params: { slug: string } }) {
-  const postData = getPostData(params.slug)
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const postData = getPostData(slug)
   
   return <TemplateSelector data={postData} />
 }
