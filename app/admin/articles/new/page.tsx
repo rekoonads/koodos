@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClient } from "@/utils/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,9 +31,13 @@ export default function NewArticlePage() {
   }, [])
 
   const fetchCategories = async () => {
-    const supabase = createClient()
-    const { data } = await supabase.from('categories').select('*').order('name')
-    if (data) setCategories(data)
+    try {
+      const response = await fetch('/api/categories')
+      const data = await response.json()
+      setCategories(data.categories || [])
+    } catch (error) {
+      console.error('Failed to fetch categories:', error)
+    }
   }
 
   const handleSave = async (publishStatus: string) => {
@@ -53,8 +56,9 @@ export default function NewArticlePage() {
           title,
           excerpt,
           content,
-          category_id: categoryId || null,
-          status: publishStatus
+          categoryId: categoryId || null,
+          status: publishStatus.toUpperCase(),
+          authorId: 'sample_clerk_id'
         })
       })
 

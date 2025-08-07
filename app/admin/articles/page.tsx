@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@/utils/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -12,9 +11,9 @@ interface Article {
   title: string
   slug: string
   status: string
-  created_at: string
+  createdAt: string
   views: number
-  author: { username: string }
+  author: { name: string }
   category: { name: string }
 }
 
@@ -27,25 +26,19 @@ export default function ArticlesPage() {
   }, [])
 
   const fetchArticles = async () => {
-    const supabase = createClient()
-    
-    const { data, error } = await supabase
-      .from('articles')
-      .select(`
-        id, title, slug, status, created_at, views,
-        author:users(username),
-        category:categories(name)
-      `)
-      .order('created_at', { ascending: false })
-
-    if (data) {
-      setArticles(data)
+    try {
+      const response = await fetch('/api/articles')
+      const data = await response.json()
+      setArticles(data.articles || [])
+    } catch (error) {
+      console.error('Failed to fetch articles:', error)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'published': return 'bg-green-100 text-green-800'
       case 'draft': return 'bg-yellow-100 text-yellow-800'
       case 'archived': return 'bg-gray-100 text-gray-800'
@@ -77,7 +70,7 @@ export default function ArticlesPage() {
                 <div>
                   <CardTitle className="text-lg">{article.title}</CardTitle>
                   <p className="text-sm text-gray-600 mt-1">
-                    by {article.author?.username} • {article.category?.name}
+                    by {article.author?.name} • {article.category?.name}
                   </p>
                 </div>
                 <Badge className={getStatusColor(article.status)}>
@@ -88,7 +81,7 @@ export default function ArticlesPage() {
             <CardContent>
               <div className="flex justify-between items-center">
                 <div className="text-sm text-gray-600">
-                  Created: {new Date(article.created_at).toLocaleDateString()} • 
+                  Created: {new Date(article.createdAt).toLocaleDateString()} • 
                   Views: {article.views || 0}
                 </div>
                 <div className="space-x-2">
