@@ -37,7 +37,7 @@ export default function VideoPlayer({ src, poster, title, className = "" }: Vide
         ref={videoRef}
         className="w-full h-full"
         poster={poster}
-        data-plyr-config='{"title": "' + title + '"}'
+        data-plyr-config={`{"title": "${title}"}`}
       >
         <source src={src} type="video/mp4" />
         Your browser does not support the video tag.

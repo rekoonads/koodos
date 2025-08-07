@@ -12,6 +12,21 @@ export default function VideoPlayer({ src, poster, className = "" }: VideoPlayer
   const videoRef = useRef<HTMLVideoElement>(null)
   const playerRef = useRef<any>(null)
   const [isClient, setIsClient] = useState(false)
+  
+  // Validate and sanitize file paths to prevent path traversal
+  const validatePath = (path: string) => {
+    if (!path) return '';
+    // Remove path traversal sequences and only allow safe characters
+    const sanitized = path.replace(/\.\./g, '').replace(/[^a-zA-Z0-9._/-]/g, '');
+    // Only allow http/https URLs or relative paths starting with /
+    if (sanitized.startsWith('http://') || sanitized.startsWith('https://') || sanitized.startsWith('/')) {
+      return sanitized;
+    }
+    return '';
+  };
+  
+  const safeSrc = validatePath(src);
+  const safePoster = poster ? validatePath(poster) : undefined;
 
   useEffect(() => {
     setIsClient(true)
@@ -66,11 +81,11 @@ export default function VideoPlayer({ src, poster, className = "" }: VideoPlayer
       <video
         ref={videoRef}
         className="plyr-video"
-        poster={poster}
+        poster={safePoster}
         controls
         crossOrigin="anonymous"
       >
-        <source src={src} type="video/mp4" />
+        <source src={safeSrc} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       

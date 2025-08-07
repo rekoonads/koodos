@@ -24,7 +24,18 @@ export default function NewArticlePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [csrfToken, setCsrfToken] = useState("")
   const router = useRouter()
+
+  // Generate CSRF token
+  useEffect(() => {
+    const generateCSRFToken = () => {
+      const array = new Uint8Array(32);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    };
+    setCsrfToken(generateCSRFToken());
+  }, []);
 
   useEffect(() => {
     fetchCategories()
@@ -51,14 +62,18 @@ export default function NewArticlePage() {
     try {
       const response = await fetch('/api/articles', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
         body: JSON.stringify({
           title,
           excerpt,
           content,
           categoryId: categoryId || null,
           status: publishStatus.toUpperCase(),
-          authorId: 'sample_clerk_id'
+          authorId: 'sample_clerk_id',
+          csrfToken
         })
       })
 

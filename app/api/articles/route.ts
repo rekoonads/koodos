@@ -35,14 +35,33 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { title, content, excerpt, categoryId, status = 'DRAFT', authorId } = body
 
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    // Sanitize inputs to prevent XSS
+    const sanitizeHtml = (str: string) => {
+      if (!str) return str;
+      return str.replace(/[<>"'&]/g, (match) => {
+        const entities: { [key: string]: string } = {
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#x27;',
+          '&': '&amp;'
+        };
+        return entities[match] || match;
+      });
+    };
+
+    const sanitizedTitle = sanitizeHtml(title);
+    const sanitizedContent = sanitizeHtml(content);
+    const sanitizedExcerpt = sanitizeHtml(excerpt);
+    
+    const slug = sanitizedTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
     const article = await prisma.article.create({
       data: {
-        title,
+        title: sanitizedTitle,
         slug,
-        content,
-        excerpt,
+        content: sanitizedContent,
+        excerpt: sanitizedExcerpt,
         categoryId,
         status: status as any,
         authorId

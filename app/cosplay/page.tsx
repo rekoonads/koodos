@@ -62,16 +62,30 @@ interface MediaDisplayProps {
 }
 
 function MediaDisplay({ media, title, className = "" }: MediaDisplayProps) {
+  // Sanitize URLs to prevent XSS
+  const sanitizeUrl = (url: string) => {
+    if (!url) return "/placeholder.svg";
+    // Only allow http/https URLs or relative paths
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/')) {
+      return url;
+    }
+    return "/placeholder.svg";
+  };
+
+  const sanitizedUrl = sanitizeUrl(media.url);
+  const sanitizedThumbnail = media.thumbnail ? sanitizeUrl(media.thumbnail) : undefined;
+  const sanitizedTitle = title.replace(/[<>"'&]/g, '');
+
   if (media.type === "video") {
     return (
       <video
         className={`w-full h-full object-cover ${className}`}
         controls
         preload="metadata"
-        poster={media.thumbnail}
-        aria-label={`Video: ${title}`}
+        poster={sanitizedThumbnail}
+        aria-label={`Video: ${sanitizedTitle}`}
       >
-        <source src={media.url} type="video/mp4" />
+        <source src={sanitizedUrl} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     );
@@ -79,8 +93,8 @@ function MediaDisplay({ media, title, className = "" }: MediaDisplayProps) {
 
   return (
     <Image
-      src={media.url || "/placeholder.svg"}
-      alt={title}
+      src={sanitizedUrl}
+      alt={sanitizedTitle}
       fill
       className={`object-cover ${className}`}
     />

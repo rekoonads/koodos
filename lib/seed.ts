@@ -66,7 +66,14 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e)
+    // Sanitize error message to prevent log injection
+    const sanitizeLogMessage = (message: any) => {
+      if (typeof message === 'string') {
+        return message.replace(/[\r\n]/g, ' ').replace(/[\x00-\x1f\x7f-\x9f]/g, '');
+      }
+      return JSON.stringify(message).replace(/[\r\n]/g, ' ').replace(/[\x00-\x1f\x7f-\x9f]/g, '');
+    };
+    console.error('Database seeding failed:', sanitizeLogMessage(e))
     process.exit(1)
   })
   .finally(async () => {

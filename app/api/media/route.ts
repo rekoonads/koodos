@@ -12,14 +12,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // For now, return placeholder URL - implement actual file upload later
-    const fileUrl = `/uploads/${Date.now()}-${file.name}`
+    // Sanitize inputs to prevent XSS
+    const sanitizeInput = (str: string) => {
+      if (!str) return str;
+      return str.replace(/[<>"'&]/g, (match) => {
+        const entities: { [key: string]: string } = {
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#x27;',
+          '&': '&amp;'
+        };
+        return entities[match] || match;
+      });
+    };
+
+    // Sanitize filename to prevent path traversal
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fileUrl = `/uploads/${Date.now()}-${sanitizedFileName}`;
     
     const media = await prisma.media.create({
       data: {
         url: fileUrl,
         type: file.type.startsWith('image/') ? 'IMAGE' : 'VIDEO',
-        alt: altText,
+        alt: sanitizeInput(altText),
         articleId
       }
     })

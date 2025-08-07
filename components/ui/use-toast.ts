@@ -145,17 +145,31 @@ type Toast = Omit<ToasterToast, "id">
 function toast({ ...props }: Toast) {
   const id = genId()
 
+  // Sanitize toast properties to prevent injection
+  const sanitizeToastProps = (props: any) => {
+    const sanitized = { ...props };
+    if (typeof sanitized.title === 'string') {
+      sanitized.title = sanitized.title.replace(/[<>"'&]/g, '');
+    }
+    if (typeof sanitized.description === 'string') {
+      sanitized.description = sanitized.description.replace(/[<>"'&]/g, '');
+    }
+    return sanitized;
+  };
+
+  const sanitizedProps = sanitizeToastProps(props);
+
   const update = (props: ToasterToast) =>
     dispatch({
       type: "UPDATE_TOAST",
-      toast: { ...props, id },
+      toast: { ...sanitizeToastProps(props), id },
     })
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
 
   dispatch({
     type: "ADD_TOAST",
     toast: {
-      ...props,
+      ...sanitizedProps,
       id,
       open: true,
       onOpenChange: (open) => {

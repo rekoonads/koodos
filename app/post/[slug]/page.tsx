@@ -87,7 +87,28 @@ const getPostData = (slug: string): PostData => {
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const postData = getPostData(slug)
   
-  return <TemplateSelector data={postData} />
+  // Sanitize slug to prevent XSS
+  const sanitizedSlug = slug.replace(/[^a-zA-Z0-9-]/g, '');
+  const postData = getPostData(sanitizedSlug)
+  
+  // Sanitize HTML content
+  const sanitizeHtml = (html: string) => {
+    return html.replace(/<script[^>]*>.*?<\/script>/gi, '')
+               .replace(/javascript:/gi, '')
+               .replace(/on\w+\s*=/gi, '');
+  };
+  
+  const sanitizedPostData = {
+    ...postData,
+    content: sanitizeHtml(postData.content),
+    title: postData.title.replace(/[<>"'&]/g, (match) => {
+      const entities: { [key: string]: string } = {
+        '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '&': '&amp;'
+      };
+      return entities[match] || match;
+    })
+  };
+  
+  return <TemplateSelector data={sanitizedPostData} />
 }
