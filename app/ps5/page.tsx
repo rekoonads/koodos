@@ -1,0 +1,35 @@
+"use client"
+
+import { motion } from "framer-motion"
+
+export default function PS5Page() {
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-bold text-gray-900 mb-8 border-b-4 border-red-600 pb-2 inline-block"
+        >
+          PlayStation 5
+        </motion.h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {[1, 2, 3, 4].map((item) => (
+            <motion.div
+              key={item}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: item * 0.1 }}
+              className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6"
+            >
+              <div className="h-40 bg-gray-200 rounded mb-4"></div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">PS5 Content {item}</h3>
+              <p className="text-gray-600">PlayStation 5 games, reviews, and news.</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

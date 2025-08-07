@@ -1,0 +1,85 @@
+"use client"
+
+import { motion } from "framer-motion"
+import Image from "next/image"
+import Link from "next/link"
+
+const newsArticles = [
+  {
+    id: 1,
+    title: "PlayStation 5 Pro Announced with Enhanced Graphics",
+    excerpt: "Sony reveals the next generation of gaming with improved performance",
+    image: "/placeholder.svg?height=200&width=300",
+    category: "Gaming",
+    publishedAt: "2 hours ago"
+  },
+  {
+    id: 2,
+    title: "Nintendo Direct Showcases Upcoming Titles",
+    excerpt: "New games and updates coming to Nintendo Switch",
+    image: "/placeholder.svg?height=200&width=300",
+    category: "Nintendo",
+    publishedAt: "4 hours ago"
+  },
+  {
+    id: 3,
+    title: "Esports Tournament Breaks Viewership Records",
+    excerpt: "Millions tune in to watch the championship finals",
+    image: "/placeholder.svg?height=200&width=300",
+    category: "Esports",
+    publishedAt: "6 hours ago"
+  },
+  {
+    id: 4,
+    title: "New Gaming Laptop with RTX 4090 Released",
+    excerpt: "Portable powerhouse for gaming on the go",
+    image: "/placeholder.svg?height=200&width=300",
+    category: "Hardware",
+    publishedAt: "8 hours ago"
+  }
+]
+
+export default function LatestNews() {
+  return (
+    <section className="px-6 lg:px-12 py-12">
+      <motion.h2
+        initial={{ opacity: 0, x: -30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        className="text-3xl font-bold text-gray-900 mb-8 border-b-4 border-blue-600 pb-2 inline-block"
+      >
+        Latest News
+      </motion.h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {newsArticles.map((article, index) => (
+          <Link key={article.id} href={`/news/${article.id}`}>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+            >
+              <div className="relative h-48 overflow-hidden">
+                <Image
+                  src={article.image}
+                  alt={article.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 text-xs font-semibold rounded">
+                  {article.category}
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  {article.title}
+                </h3>
+                <p className="text-gray-600 text-sm mb-3">{article.excerpt}</p>
+                <div className="text-xs text-gray-500">{article.publishedAt}</div>
+              </div>
+            </motion.div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
