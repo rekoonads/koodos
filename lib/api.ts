@@ -1,5 +1,5 @@
 // Frontend API client - only calls external backend
-const API_BASE_URL = "https://admindash-pi-three.vercel.app/api/public";
+const API_BASE_URL = "http://localhost:3000/api/public";
 
 export interface NewsArticle {
   id: string;
