@@ -1,4 +1,4 @@
-// For your koodos.in website - lib/api.ts
+// Frontend API client - only calls external backend
 const API_BASE_URL = "https://admindash-pi-three.vercel.app/api/public";
 
 export interface NewsArticle {
@@ -97,6 +97,48 @@ export async function fetchCategories(): Promise<
     return {
       success: false,
       error: "Failed to fetch categories",
+    };
+  }
+}
+
+export async function getBanners(): Promise<ApiResponse<NewsArticle[]>> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/banners`, {
+      next: { revalidate: 300 },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Failed to fetch banners:", error);
+    return {
+      success: false,
+      error: "Failed to fetch banners",
+    };
+  }
+}
+
+export async function getAnalytics(): Promise<ApiResponse<any>> {
+  try {
+    const response = await fetch('https://admindash-pi-three.vercel.app/api/analytics', {
+      next: { revalidate: 300 },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Failed to fetch analytics:", error);
+    return {
+      success: false,
+      error: "Failed to fetch analytics",
     };
   }
 }
