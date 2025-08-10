@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import VideoPlayer from '@/components/video-player';
+import { CommentsSection } from '@/components/comments-section';
 import {
   ArrowLeft,
   Calendar,
@@ -483,6 +484,13 @@ export default function BlogPost({ params }: PageProps) {
               </button>
             </form>
           </motion.div>
+        </div>
+      </section>
+      
+      {/* Comments Section */}
+      <section className="px-4 lg:px-8 py-8">
+        <div className="max-w-4xl mx-auto">
+          <CommentsSection articleId={article.id} />
         </div>
       </section>
     </div>
