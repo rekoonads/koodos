@@ -1,11 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
-import { fetchNews } from "@/lib/api"
 import Link from "next/link"
 import Image from "next/image"
 import { fetchNews } from "@/lib/api"
