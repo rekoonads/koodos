@@ -1,5 +1,5 @@
 // Frontend API client - only calls external backend
-const API_BASE_URL = "https://admindash-pi-three.vercel.app/api/public";
+const API_BASE_URL = "https://admin.koodos.in/api/public";
 
 export interface NewsArticle {
   id: string;
@@ -135,7 +135,7 @@ export async function getBanners(): Promise<ApiResponse<NewsArticle[]>> {
 
 export async function getAnalytics(): Promise<ApiResponse<any>> {
   try {
-    const response = await fetch('https://admindash-pi-three.vercel.app/api/analytics', {
+    const response = await fetch('https://admin.koodos.in/api/analytics', {
       next: { revalidate: 300 },
     });
 
