@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['@prisma/client', 'prisma'],
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@prisma/client', 'prisma')
+    }
+    return config
+  },
   images: {
-    domains: ['localhost', 'via.placeholder.com'],
+    domains: ['koodos.in', 'admin.koodos.in', 'via.placeholder.com', 'res.cloudinary.com'],
     unoptimized: true
   }
 }

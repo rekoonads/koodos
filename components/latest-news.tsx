@@ -4,12 +4,15 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import VideoPlayer from '@/components/video-player'
 
 interface Article {
   id: string
   title: string
   excerpt: string
   image: string
+  videoUrl?: string
+  thumbnail?: string
   slug: string
   category: {
     name: string
@@ -26,7 +29,7 @@ export default function LatestNews() {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const response = await fetch('https://admindash-pi-three.vercel.app/api/articles?status=PUBLISHED&limit=4')
+        const response = await fetch('https://admin.koodos.in/api/articles?status=PUBLISHED&limit=4')
         if (response.ok) {
           const data = await response.json()
           setArticles(data.articles || [])
@@ -88,12 +91,20 @@ export default function LatestNews() {
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
             >
               <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={article.image || '/placeholder.svg?height=200&width=300'}
-                  alt={article.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {article.videoUrl ? (
+                  <VideoPlayer 
+                    src={article.videoUrl} 
+                    poster={article.thumbnail || article.image}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={article.image || '/placeholder.svg?height=200&width=300'}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
                 <div className="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 text-xs font-semibold rounded">
                   {article.category.name}
                 </div>

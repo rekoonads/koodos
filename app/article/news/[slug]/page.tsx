@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import VideoPlayer from '@/components/video-player';
 import {
   ArrowLeft,
   Calendar,
@@ -21,6 +22,8 @@ interface NewsArticle {
   excerpt: string;
   content: string;
   featuredImage?: string;
+  videoUrl?: string;
+  thumbnail?: string;
   category: string;
   author: string;
   views: number;
@@ -37,7 +40,7 @@ interface PageProps {
 // API functions
 async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
   try {
-    const response = await fetch(`https://admindash-pi-three.vercel.app/api/articles/${slug}`, {
+    const response = await fetch(`https://admin.koodos.in/api/articles/${slug}`, {
       cache: 'no-store'
     });
 
@@ -61,7 +64,7 @@ async function fetchRelatedArticles(
   currentSlug: string
 ): Promise<NewsArticle[]> {
   try {
-    const response = await fetch(`https://admindash-pi-three.vercel.app/api/articles?status=PUBLISHED&limit=3`, {
+    const response = await fetch(`https://admin.koodos.in/api/articles?status=PUBLISHED&limit=3`, {
       cache: 'no-store'
     });
 
@@ -261,21 +264,29 @@ export default function BlogPost({ params }: PageProps) {
             </div>
           </motion.div>
 
-          {/* Featured Image */}
-          {article.featuredImage && (
+          {/* Featured Media */}
+          {(article.featuredImage || article.videoUrl) && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="relative aspect-video w-full overflow-hidden rounded-lg mb-8"
             >
-              <Image
-                src={article.featuredImage || "/placeholder.svg"}
-                alt={article.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                priority
-              />
+              {article.videoUrl ? (
+                <VideoPlayer 
+                  src={article.videoUrl} 
+                  poster={article.thumbnail || article.featuredImage}
+                  className="w-full h-full"
+                />
+              ) : (
+                <Image
+                  src={article.featuredImage || "/placeholder.svg"}
+                  alt={article.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                  priority
+                />
+              )}
             </motion.div>
           )}
 
