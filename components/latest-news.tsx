@@ -26,7 +26,7 @@ export default function LatestNews() {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const response = await fetch('/api/articles?status=PUBLISHED&limit=4')
+        const response = await fetch('https://admindash-pi-three.vercel.app/api/articles?status=PUBLISHED&limit=4')
         if (response.ok) {
           const data = await response.json()
           setArticles(data.articles || [])

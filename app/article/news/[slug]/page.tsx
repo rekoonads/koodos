@@ -37,17 +37,9 @@ interface PageProps {
 // API functions
 async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
   try {
-    const response = await fetch(
-      `https://admindash-pi-three.vercel.app/api/public/news/${slug}`,
-      {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 300 },
-      }
-    );
+    const response = await fetch(`https://admindash-pi-three.vercel.app/api/articles/${slug}`, {
+      cache: 'no-store'
+    });
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -56,8 +48,8 @@ async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result.success ? result.data : null;
+    const article = await response.json();
+    return article;
   } catch (error) {
     console.error("Failed to fetch article:", error);
     return null;
@@ -69,30 +61,21 @@ async function fetchRelatedArticles(
   currentSlug: string
 ): Promise<NewsArticle[]> {
   try {
-    const response = await fetch(
-      `https://admindash-pi-three.vercel.app/api/public/news?category=${category}&limit=3`,
-      {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 300 },
-      }
-    );
+    const response = await fetch(`https://admindash-pi-three.vercel.app/api/articles?status=PUBLISHED&limit=3`, {
+      cache: 'no-store'
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const result = await response.json();
-    if (result.success) {
-      // Filter out the current article
-      return result.data.articles.filter(
-        (article: NewsArticle) => article.slug !== currentSlug
-      );
-    }
-    return [];
+    const articles = result.articles || [];
+    
+    // Filter out the current article
+    return articles.filter(
+      (article: NewsArticle) => article.slug !== currentSlug
+    ).slice(0, 3);
   } catch (error) {
     console.error("Failed to fetch related articles:", error);
     return [];
