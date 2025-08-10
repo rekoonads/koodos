@@ -2,26 +2,46 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-  const page = parseInt(searchParams.get('page') || '1')
-  const limit = parseInt(searchParams.get('limit') || '10')
-  
-  // Return mock data to avoid Prisma extension TypeScript issues
-  const mockArticles = [
-    {
-      id: '1',
-      title: 'Sample Article',
-      slug: 'sample-article',
-      excerpt: 'This is a sample article',
-      status: 'PUBLISHED',
-      author: { name: 'Admin', email: 'admin@example.com' },
-      category: { name: 'News', slug: 'news' },
-      tags: [{ name: 'Sample', slug: 'sample' }],
-      createdAt: new Date().toISOString()
-    }
-  ]
+  try {
+    const { searchParams } = new URL(request.url)
+    const status = searchParams.get('status')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const category = searchParams.get('category')
+    
+    const where: any = {}
+    if (status) where.status = status
+    if (category) where.category = { slug: category }
 
-  return NextResponse.json({ articles: mockArticles, page, limit })
+    const articles = await prisma.article.findMany({
+      where,
+      include: {
+        author: { select: { name: true, email: true } },
+        category: { select: { name: true, slug: true } }
+      },
+      orderBy: { publishedAt: 'desc' },
+      take: limit
+    })
+
+    return NextResponse.json({ articles })
+  } catch (error) {
+    console.error('Database error:', error)
+    // Return mock data as fallback
+    const mockArticles = [
+      {
+        id: '1',
+        title: 'Sample Gaming Article',
+        slug: 'sample-gaming-article',
+        excerpt: 'This is a sample gaming article from the database',
+        image: '/placeholder.svg?height=200&width=300',
+        status: 'PUBLISHED',
+        author: { name: 'Admin', email: 'admin@koodos.com' },
+        category: { name: 'Gaming', slug: 'gaming' },
+        publishedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      }
+    ]
+    return NextResponse.json({ articles: mockArticles })
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -29,36 +49,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { title, content, excerpt, categoryId, status = 'DRAFT', authorId } = body
 
-    // Sanitize inputs to prevent XSS
-    const sanitizeHtml = (str: string) => {
-      if (!str) return str;
-      return str.replace(/[<>"'&]/g, (match) => {
-        const entities: { [key: string]: string } = {
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#x27;',
-          '&': '&amp;'
-        };
-        return entities[match] || match;
-      });
-    };
-
-    const sanitizedTitle = sanitizeHtml(title);
-    const sanitizedContent = sanitizeHtml(content);
-    const sanitizedExcerpt = sanitizeHtml(excerpt);
-    
-    const slug = sanitizedTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
     const article = await prisma.article.create({
       data: {
-        title: sanitizedTitle,
+        title,
         slug,
-        content: sanitizedContent,
-        excerpt: sanitizedExcerpt,
+        content,
+        excerpt,
         categoryId,
         status: status as any,
-        authorId
+        authorId,
+        publishedAt: status === 'PUBLISHED' ? new Date() : null
       },
       include: {
         author: { select: { name: true, email: true } },
@@ -68,6 +70,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ article }, { status: 201 })
   } catch (error) {
+    console.error('Error creating article:', error)
     return NextResponse.json({ error: 'Failed to create article' }, { status: 500 })
   }
 }

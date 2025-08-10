@@ -5,37 +5,59 @@ import { useEffect, useRef, useState } from "react"
 interface VideoPlayerProps {
   src: string
   poster?: string
+  thumbnail?: string
   className?: string
 }
 
-export default function VideoPlayer({ src, poster, className = "" }: VideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
+export default function VideoPlayer({ src, poster, thumbnail, className = "" }: VideoPlayerProps) {
+  const videoRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<any>(null)
   const [isClient, setIsClient] = useState(false)
   
-  // Validate and sanitize file paths to prevent path traversal
-  const validatePath = (path: string) => {
-    if (!path) return '';
-    // Remove path traversal sequences and only allow safe characters
-    const sanitized = path.replace(/\.\./g, '').replace(/[^a-zA-Z0-9._/-]/g, '');
-    // Only allow http/https URLs or relative paths starting with /
-    if (sanitized.startsWith('http://') || sanitized.startsWith('https://') || sanitized.startsWith('/')) {
-      return sanitized;
+  // Extract video ID from YouTube/Vimeo URLs
+  const getVideoInfo = (url: string) => {
+    if (!url) return { type: 'video', id: '', embedUrl: '' };
+    
+    // YouTube patterns
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeMatch = url.match(youtubeRegex);
+    if (youtubeMatch) {
+      return {
+        type: 'youtube',
+        id: youtubeMatch[1],
+        embedUrl: `https://www.youtube.com/embed/${youtubeMatch[1]}`
+      };
     }
-    return '';
+    
+    // Vimeo patterns
+    const vimeoRegex = /(?:vimeo\.com\/)([0-9]+)/;
+    const vimeoMatch = url.match(vimeoRegex);
+    if (vimeoMatch) {
+      return {
+        type: 'vimeo',
+        id: vimeoMatch[1],
+        embedUrl: `https://player.vimeo.com/video/${vimeoMatch[1]}`
+      };
+    }
+    
+    // Direct video file
+    return {
+      type: 'video',
+      id: '',
+      embedUrl: url
+    };
   };
   
-  const safeSrc = validatePath(src);
-  const safePoster = poster ? validatePath(poster) : undefined;
+  const videoInfo = getVideoInfo(src);
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
   useEffect(() => {
-    if (isClient && videoRef.current && !playerRef.current) {
+    if (isClient && videoRef.current && !playerRef.current && videoInfo.id) {
       import('plyr').then((Plyr) => {
-        playerRef.current = new Plyr.default(videoRef.current!, {
+        const config = {
           controls: [
             'play-large',
             'play',
@@ -48,15 +70,23 @@ export default function VideoPlayer({ src, poster, className = "" }: VideoPlayer
             'fullscreen'
           ],
           settings: ['quality', 'speed'],
-          quality: {
-            default: 720,
-            options: [1080, 720, 480, 360]
+          youtube: {
+            noCookie: false,
+            rel: 0,
+            showinfo: 0,
+            iv_load_policy: 3,
+            modestbranding: 1
           },
-          speed: {
-            selected: 1,
-            options: [0.5, 0.75, 1, 1.25, 1.5, 2]
+          vimeo: {
+            byline: false,
+            portrait: false,
+            title: false,
+            speed: true,
+            transparent: false
           }
-        })
+        };
+        
+        playerRef.current = new Plyr.default(videoRef.current!, config)
       })
     }
 
@@ -66,7 +96,7 @@ export default function VideoPlayer({ src, poster, className = "" }: VideoPlayer
         playerRef.current = null
       }
     }
-  }, [isClient])
+  }, [isClient, videoInfo.id])
 
   if (!isClient) {
     return (
@@ -78,16 +108,34 @@ export default function VideoPlayer({ src, poster, className = "" }: VideoPlayer
 
   return (
     <div className={`plyr-container ${className}`}>
-      <video
-        ref={videoRef}
-        className="plyr-video"
-        poster={safePoster}
-        controls
-        crossOrigin="anonymous"
-      >
-        <source src={safeSrc} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      {videoInfo.type === 'youtube' && (
+        <div
+          ref={videoRef}
+          data-plyr-provider="youtube"
+          data-plyr-embed-id={videoInfo.id}
+          data-plyr-poster={thumbnail || poster || ''}
+        />
+      )}
+      {videoInfo.type === 'vimeo' && (
+        <div
+          ref={videoRef}
+          data-plyr-provider="vimeo"
+          data-plyr-embed-id={videoInfo.id}
+          data-plyr-poster={thumbnail || poster || ''}
+        />
+      )}
+      {videoInfo.type === 'video' && (
+        <video
+          ref={videoRef as any}
+          className="plyr-video"
+          poster={thumbnail || poster}
+          controls
+          crossOrigin="anonymous"
+        >
+          <source src={videoInfo.embedUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
       
       <style jsx global>{`
         @import url('https://cdn.plyr.io/3.7.8/plyr.css');
@@ -95,44 +143,81 @@ export default function VideoPlayer({ src, poster, className = "" }: VideoPlayer
         .plyr-container {
           --plyr-color-main: #000000;
           --plyr-video-background: #000000;
-          --plyr-menu-background: rgba(0, 0, 0, 0.9);
+          --plyr-menu-background: rgba(0, 0, 0, 0.95);
           --plyr-menu-color: #ffffff;
-          --plyr-control-icon-size: 18px;
-          --plyr-control-spacing: 10px;
-          --plyr-progress-loading-background: rgba(255, 255, 255, 0.25);
-          --plyr-progress-buffer-background: rgba(255, 255, 255, 0.25);
+          --plyr-control-icon-size: 20px;
+          --plyr-control-spacing: 12px;
+          --plyr-progress-loading-background: rgba(255, 255, 255, 0.2);
+          --plyr-progress-buffer-background: rgba(255, 255, 255, 0.3);
           --plyr-progress-played-background: #000000;
           --plyr-range-thumb-background: #000000;
-          --plyr-range-track-background: rgba(255, 255, 255, 0.25);
+          --plyr-range-track-background: rgba(255, 255, 255, 0.2);
           --plyr-range-fill-background: #000000;
         }
         
         .plyr {
-          border-radius: 8px;
+          border-radius: 12px;
           overflow: hidden;
         }
         
         .plyr__controls {
-          background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-          border-radius: 0 0 8px 8px;
+          background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+          border-radius: 0 0 12px 12px;
+        }
+        
+        .plyr__control {
+          color: #ffffff;
+          background: transparent;
         }
         
         .plyr__control:hover {
-          background: rgba(0, 0, 0, 0.8);
-        }
-        
-        .plyr__control--pressed {
-          background: rgba(0, 0, 0, 0.9);
+          background: rgba(0, 0, 0, 0.7);
           color: #ffffff;
         }
         
+        .plyr__control--pressed {
+          background: #000000;
+          color: #ffffff;
+        }
+        
+        .plyr__control[data-plyr="play"] {
+          background: #000000 !important;
+          border-radius: 50%;
+          width: 48px;
+          height: 48px;
+        }
+        
+        .plyr__control[data-plyr="play"]:hover {
+          background: rgba(0, 0, 0, 0.8) !important;
+          transform: scale(1.05);
+        }
+        
+        .plyr__control--playing[data-plyr="play"] {
+          background: #000000 !important;
+        }
+        
+        .plyr__control--overlaid {
+          background: #000000 !important;
+          border: 3px solid #ffffff;
+          border-radius: 50%;
+          width: 80px;
+          height: 80px;
+        }
+        
+        .plyr__control--overlaid:hover {
+          background: rgba(0, 0, 0, 0.9) !important;
+          transform: scale(1.1);
+        }
+        
         .plyr__menu {
+          background: rgba(0, 0, 0, 0.95);
           border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .plyr__tooltip {
-          background: rgba(0, 0, 0, 0.9);
-          border-radius: 4px;
+          background: #000000;
+          border-radius: 6px;
           color: #ffffff;
         }
       `}</style>
