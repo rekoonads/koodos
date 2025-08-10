@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     if (status) where.status = status
     if (category) where.category = { slug: category }
 
-    const articles = await prisma.article.findMany({
+    const articles = await (prisma.article as any).findMany({
       where,
       include: {
         author: { select: { name: true, email: true } },
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
-    const article = await prisma.article.create({
+    const article = await (prisma.article as any).create({
       data: {
         title,
         slug,

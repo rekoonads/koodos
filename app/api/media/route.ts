@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     const fileUrl = `/uploads/${Date.now()}-${sanitizedFileName}`;
     
-    const media = await prisma.media.create({
+    const media = await (prisma.media as any).create({
       data: {
         url: fileUrl,
         type: file.type.startsWith('image/') ? 'IMAGE' : 'VIDEO',

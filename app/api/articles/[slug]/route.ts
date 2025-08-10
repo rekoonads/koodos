@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const article = await prisma.article.findUnique({
+    const article = await (prisma.article as any).findUnique({
       where: { slug: params.slug },
       include: {
         author: { select: { name: true, email: true } },
@@ -19,7 +19,7 @@ export async function GET(
     }
 
     // Increment view count
-    await prisma.article.update({
+    await (prisma.article as any).update({
       where: { id: article.id },
       data: { views: { increment: 1 } }
     })
