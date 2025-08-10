@@ -47,7 +47,14 @@ export async function fetchNews(options?: {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const articles = await response.json();
+    return {
+      success: true,
+      data: {
+        articles: articles,
+        total: articles.length
+      }
+    };
   } catch (error) {
     console.error("Failed to fetch news:", error);
     return {
@@ -69,7 +76,11 @@ export async function fetchArticle(
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return await response.json();
+    const article = await response.json();
+    return {
+      success: true,
+      data: article
+    };
   } catch (error) {
     console.error("Failed to fetch article:", error);
     return {
