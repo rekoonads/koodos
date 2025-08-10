@@ -1,5 +1,5 @@
 // Frontend API client - only calls external backend
-const API_BASE_URL = "http://localhost:3000/api/public";
+const API_BASE_URL = "https://admindash-pi-three.vercel.app/api/public";
 
 export interface NewsArticle {
   id: string;
@@ -39,7 +39,7 @@ export async function fetchNews(options?: {
     if (options?.category) params.append("category", options.category);
     if (options?.featured) params.append("featured", "true");
 
-    const response = await fetch(`${API_BASE_URL}/news?${params}`, {
+    const response = await fetch(`${API_BASE_URL}/articles?${params}`, {
       next: { revalidate: 300 }, // Revalidate every 5 minutes
     });
 
@@ -61,7 +61,7 @@ export async function fetchArticle(
   slug: string
 ): Promise<ApiResponse<NewsArticle>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/news/${slug}`, {
+    const response = await fetch(`${API_BASE_URL}/articles/${slug}`, {
       next: { revalidate: 300 },
     });
 
