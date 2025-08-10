@@ -40,7 +40,7 @@ interface PageProps {
 // API functions
 async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
   try {
-    const response = await fetch(`https://admin.koodos.in/api/articles/${slug}`, {
+    const response = await fetch(`https://admin.koodos.in/api/public/articles/${slug}`, {
       cache: 'no-store'
     });
 
@@ -64,7 +64,7 @@ async function fetchRelatedArticles(
   currentSlug: string
 ): Promise<NewsArticle[]> {
   try {
-    const response = await fetch(`https://admin.koodos.in/api/articles?status=PUBLISHED&limit=3`, {
+    const response = await fetch(`https://admin.koodos.in/api/public/articles?status=PUBLISHED&limit=3`, {
       cache: 'no-store'
     });
 
