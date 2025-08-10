@@ -40,7 +40,7 @@ export async function fetchNews(options?: {
     if (options?.featured) params.append("featured", "true");
 
     const response = await fetch(`${API_BASE_URL}/articles?${params}`, {
-      next: { revalidate: 300 }, // Revalidate every 5 minutes
+      next: { revalidate: 60 }, // Revalidate every minute for fresh content
     });
 
     if (!response.ok) {

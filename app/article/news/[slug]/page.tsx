@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import Head from "next/head";
 import VideoPlayer from '@/components/video-player';
 import {
   ArrowLeft,
@@ -205,7 +206,21 @@ export default function BlogPost({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      <Head>
+        <title>{article?.meta_title || article?.title || 'Article'}</title>
+        <meta name="description" content={article?.meta_description || article?.excerpt || ''} />
+        <meta name="keywords" content={article?.meta_keywords || ''} />
+        <meta property="og:title" content={article?.title || ''} />
+        <meta property="og:description" content={article?.excerpt || ''} />
+        <meta property="og:image" content={article?.featuredImage || ''} />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={article?.title || ''} />
+        <meta name="twitter:description" content={article?.excerpt || ''} />
+        <meta name="twitter:image" content={article?.featuredImage || ''} />
+      </Head>
+      <div className="min-h-screen bg-white">
       {/* Header */}
       <section className="bg-gradient-to-r from-red-600 to-red-800 text-white py-8">
         <div className="px-4 lg:px-8">
@@ -468,5 +483,6 @@ export default function BlogPost({ params }: PageProps) {
         </div>
       </section>
     </div>
+    </>
   );
 }
