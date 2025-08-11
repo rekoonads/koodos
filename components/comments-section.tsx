@@ -48,7 +48,7 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`/api/comments?articleId=${articleId}`)
+      const response = await fetch(`https://admin.koodos.in/api/public/comments?articleId=${articleId}`)
       if (response.ok) {
         const data = await response.json()
         setComments(data)
@@ -60,7 +60,7 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
 
   const fetchReactions = async () => {
     try {
-      const response = await fetch(`/api/reactions?articleId=${articleId}`)
+      const response = await fetch(`https://admin.koodos.in/api/public/reactions?articleId=${articleId}`)
       if (response.ok) {
         const data = await response.json()
         setReactions(data)
@@ -75,7 +75,7 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
 
     setLoading(true)
     try {
-      const response = await fetch("/api/comments", {
+      const response = await fetch("https://admin.koodos.in/api/public/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,7 +100,7 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
     if (!isSignedIn) return
 
     try {
-      const response = await fetch("/api/reactions", {
+      const response = await fetch("https://admin.koodos.in/api/public/reactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type, articleId })

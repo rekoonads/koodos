@@ -29,10 +29,45 @@ export default function LatestNews() {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const response = await fetch('https://admin.koodos.in/api/articles?status=PUBLISHED&limit=4')
-        if (response.ok) {
+        // Fetch both featured and latest articles
+        const [featuredResponse, latestResponse] = await Promise.all([
+          fetch('https://admin.koodos.in/api/public/articles?status=PUBLISHED&featured=true&limit=2'),
+          fetch('https://admin.koodos.in/api/public/articles?status=PUBLISHED&limit=6')
+        ])
+        
+        let allArticles: any[] = []
+        
+        if (featuredResponse.ok) {
+          const featuredData = await featuredResponse.json()
+          allArticles = [...(featuredData || [])]
+        }
+        
+        if (latestResponse.ok) {
+          const latestData = await latestResponse.json()
+          // Add latest articles that aren't already featured
+          const latestFiltered = (latestData || []).filter((article: any) => 
+            !allArticles.some(featured => featured.id === article.id)
+          ).slice(0, 4 - allArticles.length)
+          allArticles = [...allArticles, ...latestFiltered]
+        }
+        
+        const response = { ok: true }
+        const data = allArticles
+        if (allArticles.length > 0) {
           const data = await response.json()
-          setArticles(data.articles || [])
+          // Map backend data to frontend format
+          const mappedArticles = (data || []).map((article: any) => ({
+            id: article.id,
+            title: article.title,
+            excerpt: article.excerpt || '',
+            image: article.featured_image || '/placeholder.svg',
+            videoUrl: article.video_url,
+            slug: article.slug,
+            category: { name: article.category, slug: article.category },
+            publishedAt: article.published_at || article.created_at,
+            createdAt: article.created_at
+          }))
+          setArticles(mappedArticles)
         }
       } catch (error) {
         console.error('Failed to fetch articles:', error)
@@ -83,7 +118,7 @@ export default function LatestNews() {
       </motion.h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {articles.map((article, index) => (
-          <Link key={article.id} href={`/article/${article.category.slug}/${article.slug}`}>
+          <Link key={article.id} href={`/article/news/${article.slug}`}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}

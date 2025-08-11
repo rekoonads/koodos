@@ -10,19 +10,23 @@ export function useAuthNotifications() {
   useEffect(() => {
     if (!isLoaded) return
 
-    // Show welcome notification on sign in
+    // Show welcome notification only on first sign in during session
     if (isSignedIn && user) {
-      const hasShownWelcome = sessionStorage.getItem('welcome-shown')
+      const welcomeKey = `welcome-shown-${user.id}`
+      const hasShownWelcome = sessionStorage.getItem(welcomeKey)
+      
       if (!hasShownWelcome) {
-        toast({
-          variant: "success",
-          title: "Welcome back!",
-          description: `Hello ${user.firstName || user.fullName || 'there'}! You're successfully signed in.`,
-        })
-        sessionStorage.setItem('welcome-shown', 'true')
+        // Small delay to ensure UI is ready
+        setTimeout(() => {
+          toast({
+            title: "Welcome back!",
+            description: `Hello ${user.firstName || user.fullName || 'there'}! You're successfully signed in.`,
+          })
+        }, 1000)
+        sessionStorage.setItem(welcomeKey, 'true')
       }
     }
-  }, [isSignedIn, user, isLoaded])
+  }, [isSignedIn, user?.id, isLoaded])
 
   // Function to show signup success notification
   const showSignupSuccess = (userName?: string) => {
