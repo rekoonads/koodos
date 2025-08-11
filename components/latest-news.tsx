@@ -51,12 +51,9 @@ export default function LatestNews() {
           allArticles = [...allArticles, ...latestFiltered]
         }
         
-        const response = { ok: true }
-        const data = allArticles
         if (allArticles.length > 0) {
-          const data = await response.json()
           // Map backend data to frontend format
-          const mappedArticles = (data || []).map((article: any) => ({
+          const mappedArticles = allArticles.map((article: any) => ({
             id: article.id,
             title: article.title,
             excerpt: article.excerpt || '',
