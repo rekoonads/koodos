@@ -77,7 +77,7 @@ export default function ReviewsPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {reviews.map((review, index) => (
-              <Link key={review.id} href={`/article/reviews/${review.slug}`}>
+              <Link key={review.id} href={`/article/${review.category}/${review.slug}`}>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
