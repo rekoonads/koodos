@@ -75,7 +75,9 @@ export default function VideoPlayer({ src, poster, thumbnail, className = "" }: 
             rel: 0,
             showinfo: 0,
             iv_load_policy: 3,
-            modestbranding: 1
+            modestbranding: 1,
+            enablejsapi: 1,
+            controls: 1
           },
           vimeo: {
             byline: false,

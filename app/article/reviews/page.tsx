@@ -30,7 +30,7 @@ export default function ReviewsPage() {
   useEffect(() => {
     async function fetchReviews() {
       try {
-        const response = await fetch('https://admin.koodos.in/api/public/articles?type=REVIEW&status=PUBLISHED&limit=20')
+        const response = await fetch('https://admin.koodos.in/api/public/articles?category=reviews&status=PUBLISHED&limit=20')
         if (response.ok) {
           const data = await response.json()
           setReviews(data || [])
