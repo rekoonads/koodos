@@ -5,6 +5,7 @@ import "./globals.css"
 import LayoutWrapper from "@/components/layout-wrapper"
 import ClientClerkProvider from "@/components/clerk-provider"
 import ErrorBoundary from "@/components/error-boundary"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,6 +33,7 @@ export default function RootLayout({
             </LayoutWrapper>
           </ClientClerkProvider>
         </ErrorBoundary>
+        <SpeedInsights />
       </body>
     </html>
   )

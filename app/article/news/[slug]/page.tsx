@@ -45,18 +45,27 @@ interface PageProps {
 // API functions
 async function fetchArticleBySlug(slug: string): Promise<NewsArticle | null> {
   try {
-    const response = await fetch(`https://admin.koodos.in/api/public/articles/${slug}`, {
+    console.log('Fetching article:', slug)
+    const url = `https://admin.koodos.in/api/public/articles/${slug}`
+    console.log('API URL:', url)
+    
+    const response = await fetch(url, {
       cache: 'no-store'
     });
 
+    console.log('Response status:', response.status)
+    console.log('Response ok:', response.ok)
+
     if (!response.ok) {
       if (response.status === 404) {
+        console.log('Article not found (404)')
         return null;
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const article = await response.json();
+    console.log('Article fetched successfully:', article.title)
     return article;
   } catch (error) {
     console.error("Failed to fetch article:", error);
@@ -78,7 +87,7 @@ async function fetchRelatedArticles(
     }
 
     const result = await response.json();
-    const articles = result.articles || [];
+    const articles = Array.isArray(result) ? result : result.articles || [];
     
     // Filter out the current article
     return articles.filter(
@@ -127,24 +136,40 @@ export default function BlogPost({ params }: PageProps) {
 
     async function loadArticle() {
       try {
+        console.log('Starting to load article:', slug)
         setLoading(true);
         setError(null);
 
+        // Add timeout to prevent infinite loading
+        const timeoutId = setTimeout(() => {
+          console.log('API call timeout, setting error')
+          setError("Request timeout - please refresh the page");
+          setLoading(false);
+        }, 10000); // 10 second timeout
+
         const articleData = await fetchArticleBySlug(slug);
+        clearTimeout(timeoutId);
 
         if (!articleData) {
+          console.log('No article data received')
           setError("Article not found");
           return;
         }
 
+        console.log('Article loaded successfully:', articleData.title)
         setArticle(articleData);
 
         // Load related articles
-        const related = await fetchRelatedArticles(articleData.category, slug);
-        setRelatedArticles(related);
+        try {
+          const related = await fetchRelatedArticles(articleData.category, slug);
+          setRelatedArticles(related);
+        } catch (relatedError) {
+          console.error('Failed to load related articles:', relatedError)
+          // Don't fail the whole page for related articles
+        }
       } catch (err) {
         console.error("Error loading article:", err);
-        setError("Failed to load article");
+        setError(`Failed to load article: ${err instanceof Error ? err.message : 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
@@ -418,7 +443,7 @@ export default function BlogPost({ params }: PageProps) {
                   transition={{ delay: index * 0.1 }}
                   className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
                 >
-                  <Link href={`/article/news/${relatedArticle.slug}`}>
+                  <Link href={`/article/${relatedArticle.category}/${relatedArticle.slug}`}>
                     <div className="relative aspect-video overflow-hidden cursor-pointer">
                       <Image
                         src={relatedArticle.featuredImage || "/placeholder.svg"}
@@ -433,7 +458,7 @@ export default function BlogPost({ params }: PageProps) {
                     <span className="text-red-600 text-xs font-semibold uppercase">
                       {relatedArticle.category.replace("-", " ")}
                     </span>
-                    <Link href={`/article/news/${relatedArticle.slug}`}>
+                    <Link href={`/article/${relatedArticle.category}/${relatedArticle.slug}`}>
                       <h3 className="text-gray-900 font-bold text-lg leading-tight mt-2 mb-3 hover:text-red-600 transition-colors cursor-pointer">
                         {relatedArticle.title}
                       </h3>

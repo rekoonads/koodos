@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useUser } from "@clerk/nextjs"
+import { useUser, useAuth } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Heart, MessageCircle, ThumbsUp, Laugh, Frown, Angry } from "lucide-react"
@@ -18,8 +18,7 @@ interface Comment {
 
 interface Reaction {
   type: string
-  count: number
-  userReacted: boolean
+  _count: { type: number }
 }
 
 interface CommentsSectionProps {
@@ -28,6 +27,7 @@ interface CommentsSectionProps {
 
 export function CommentsSection({ articleId }: CommentsSectionProps) {
   const { user, isSignedIn } = useUser()
+  const { getToken } = useAuth()
   const [comments, setComments] = useState<Comment[]>([])
   const [reactions, setReactions] = useState<Reaction[]>([])
   const [newComment, setNewComment] = useState("")
@@ -48,7 +48,7 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`https://admin.koodos.in/api/public/comments?articleId=${articleId}`)
+      const response = await fetch(`https://admin.koodos.in/api/comments?article_id=${articleId}`)
       if (response.ok) {
         const data = await response.json()
         setComments(data)
@@ -60,7 +60,7 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
 
   const fetchReactions = async () => {
     try {
-      const response = await fetch(`https://admin.koodos.in/api/public/reactions?articleId=${articleId}`)
+      const response = await fetch(`https://admin.koodos.in/api/reactions?article_id=${articleId}`)
       if (response.ok) {
         const data = await response.json()
         setReactions(data)
@@ -71,43 +71,74 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
   }
 
   const handleSubmitComment = async () => {
-    if (!isSignedIn || !newComment.trim()) return
+    if (!isSignedIn || !newComment.trim()) {
+      console.log('Cannot submit comment:', { isSignedIn, hasContent: !!newComment.trim() })
+      return
+    }
 
     setLoading(true)
     try {
-      const response = await fetch("https://admin.koodos.in/api/public/comments", {
+      const token = await getToken()
+      console.log('Token obtained:', !!token)
+      
+      const response = await fetch("https://admin.koodos.in/api/comments", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token && { "Authorization": `Bearer ${token}` })
+        },
         body: JSON.stringify({
           content: newComment,
-          articleId,
-          author: `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || user?.username || "User"
+          article_id: articleId
         })
       })
 
+      console.log('Comment response status:', response.status)
+      
       if (response.ok) {
         setNewComment("")
         fetchComments()
+        console.log('Comment posted successfully')
+      } else {
+        const errorData = await response.json()
+        console.error('Comment failed:', errorData)
+        alert(`Failed to post comment: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error("Failed to post comment:", error)
+      alert('Failed to post comment. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
   const handleReaction = async (type: string) => {
-    if (!isSignedIn) return
+    if (!isSignedIn) {
+      console.log('User not signed in for reaction')
+      return
+    }
 
     try {
-      const response = await fetch("https://admin.koodos.in/api/public/reactions", {
+      const token = await getToken()
+      console.log('Reaction token obtained:', !!token)
+      
+      const response = await fetch("https://admin.koodos.in/api/reactions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, articleId })
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token && { "Authorization": `Bearer ${token}` })
+        },
+        body: JSON.stringify({ type, article_id: articleId })
       })
 
+      console.log('Reaction response status:', response.status)
+      
       if (response.ok) {
         fetchReactions()
+        console.log('Reaction processed successfully')
+      } else {
+        const errorData = await response.json()
+        console.error('Reaction failed:', errorData)
       }
     } catch (error) {
       console.error("Failed to react:", error)
@@ -122,17 +153,18 @@ export function CommentsSection({ articleId }: CommentsSectionProps) {
       <div className="flex flex-wrap gap-2 mb-6">
         {reactionTypes.map(({ type, icon: Icon, label }) => {
           const reaction = reactions.find(r => r.type === type)
+          const count = reaction?._count?.type || 0
           return (
             <Button
               key={type}
-              variant={reaction?.userReacted ? "default" : "outline"}
+              variant="outline"
               size="sm"
               onClick={() => handleReaction(type)}
               disabled={!isSignedIn}
               className="flex items-center gap-1"
             >
               <Icon className="h-4 w-4" />
-              {label} {reaction?.count || 0}
+              {label} {count}
             </Button>
           )
         })}
