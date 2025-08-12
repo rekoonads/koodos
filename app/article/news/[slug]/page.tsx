@@ -39,7 +39,7 @@ interface NewsArticle {
 }
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 // API functions
@@ -124,12 +124,9 @@ export default function BlogPost({ params }: PageProps) {
   const [slug, setSlug] = useState<string>("");
 
   useEffect(() => {
-    async function loadParams() {
-      const resolvedParams = await params;
-      setSlug(resolvedParams.slug);
-    }
-    loadParams();
-  }, [params]);
+    console.log('Setting slug from params:', params.slug)
+    setSlug(params.slug);
+  }, [params.slug]);
 
   useEffect(() => {
     if (!slug) return;
