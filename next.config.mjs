@@ -4,6 +4,8 @@ const nextConfig = {
     if (isServer) {
       config.externals.push('@prisma/client', 'prisma')
     }
+    config.optimization.usedExports = true
+    config.optimization.sideEffects = false
     return config
   },
   images: {
