@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import Head from "next/head";
+import { Metadata } from "next";
+
 import VideoPlayer from '@/components/video-player';
 import { CommentsSection } from '@/components/comments-section';
 import {
@@ -40,6 +41,44 @@ interface NewsArticle {
 
 interface PageProps {
   params: { slug: string };
+}
+
+// Generate metadata for the page
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  try {
+    const article = await fetchArticleBySlug(params.slug);
+    
+    if (!article) {
+      return {
+        title: 'Article Not Found',
+        description: 'The requested article could not be found.'
+      };
+    }
+
+    return {
+      title: article.meta_title || article.title,
+      description: article.meta_description || article.excerpt,
+      keywords: article.meta_keywords,
+      openGraph: {
+        title: article.title,
+        description: article.excerpt,
+        images: article.featuredImage ? [article.featuredImage] : [],
+        type: 'article'
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: article.title,
+        description: article.excerpt,
+        images: article.featuredImage ? [article.featuredImage] : []
+      }
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Article',
+      description: 'Read the latest news and articles.'
+    };
+  }
 }
 
 // API functions
@@ -175,8 +214,14 @@ export default function BlogPost({ params }: PageProps) {
     loadArticle();
   }, [slug]);
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+  const [shareUrl, setShareUrl] = useState("");
   const shareTitle = article?.title || "";
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setShareUrl(window.location.href);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -232,21 +277,7 @@ export default function BlogPost({ params }: PageProps) {
   }
 
   return (
-    <>
-      <Head>
-        <title>{article?.meta_title || article?.title || 'Article'}</title>
-        <meta name="description" content={article?.meta_description || article?.excerpt || ''} />
-        <meta name="keywords" content={article?.meta_keywords || ''} />
-        <meta property="og:title" content={article?.title || ''} />
-        <meta property="og:description" content={article?.excerpt || ''} />
-        <meta property="og:image" content={article?.featuredImage || ''} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={article?.title || ''} />
-        <meta name="twitter:description" content={article?.excerpt || ''} />
-        <meta name="twitter:image" content={article?.featuredImage || ''} />
-      </Head>
-      <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <section className="bg-gradient-to-r from-red-600 to-red-800 text-white py-8">
         <div className="px-4 lg:px-8">
@@ -382,39 +413,43 @@ export default function BlogPost({ params }: PageProps) {
               Share this article
             </h3>
             <div className="flex gap-4">
-              <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                  shareUrl
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Facebook className="h-4 w-4" />
-                Facebook
-              </a>
-              <a
-                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                  shareUrl
-                )}&text=${encodeURIComponent(shareTitle)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition-colors"
-              >
-                <Twitter className="h-4 w-4" />
-                Twitter
-              </a>
-              <a
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                  shareUrl
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
-              >
-                <Linkedin className="h-4 w-4" />
-                LinkedIn
-              </a>
+              {shareUrl && (
+                <>
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                      shareUrl
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Facebook className="h-4 w-4" />
+                    Facebook
+                  </a>
+                  <a
+                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                      shareUrl
+                    )}&text=${encodeURIComponent(shareTitle)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition-colors"
+                  >
+                    <Twitter className="h-4 w-4" />
+                    Twitter
+                  </a>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                      shareUrl
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                    LinkedIn
+                  </a>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
@@ -491,7 +526,7 @@ export default function BlogPost({ params }: PageProps) {
             <p className="text-lg opacity-90 mb-8">
               Get the latest gaming news and updates delivered to your inbox
             </p>
-            <form className="max-w-md mx-auto flex gap-4">
+            <form className="max-w-md mx-auto flex gap-4" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -516,6 +551,5 @@ export default function BlogPost({ params }: PageProps) {
         </div>
       </section>
     </div>
-    </>
   );
 }
