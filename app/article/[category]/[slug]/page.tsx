@@ -5,5 +5,5 @@ interface PageProps {
 }
 
 export default function CategoryArticlePage({ params }: PageProps) {
-  redirect(`/article/news/${params.slug}`)
+  redirect(`/article/${params.category}/${params.slug}`)
 }
