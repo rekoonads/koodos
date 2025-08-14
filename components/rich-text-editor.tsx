@@ -17,7 +17,11 @@ export default function RichTextEditor({
   className = ''
 }: RichTextEditorProps) {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+        underline: false,
+      })
+    ],
     content,
     onUpdate: ({ editor }) => {
       onChange?.(editor.getHTML())
