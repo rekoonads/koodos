@@ -53,17 +53,22 @@ export default function LatestNews() {
         
         if (allArticles.length > 0) {
           // Map backend data to frontend format
-          const mappedArticles = allArticles.map((article: any) => ({
-            id: article.id,
-            title: article.title,
-            excerpt: article.excerpt || '',
-            image: article.featured_image || '/placeholder.svg',
-            videoUrl: article.video_url,
-            slug: article.slug,
-            category: { name: article.category, slug: article.category },
-            publishedAt: article.published_at || article.created_at,
-            createdAt: article.created_at
-          }))
+          const mappedArticles = allArticles.map((article: any) => {
+            const categoryName = typeof article.category === 'string' ? article.category : article.category?.name || 'General'
+            const categorySlug = typeof article.category === 'string' ? article.category.toLowerCase().replace(/\s+/g, '-') : article.category?.slug || 'general'
+            
+            return {
+              id: article.id,
+              title: article.title,
+              excerpt: article.excerpt || '',
+              image: article.featured_image || '/placeholder.svg',
+              videoUrl: article.video_url,
+              slug: article.slug,
+              category: { name: categoryName, slug: categorySlug },
+              publishedAt: article.published_at || article.created_at,
+              createdAt: article.created_at
+            }
+          })
           setArticles(mappedArticles)
         }
       } catch (error) {
@@ -115,7 +120,7 @@ export default function LatestNews() {
       </motion.h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {articles.map((article, index) => (
-          <Link key={article.id} href={`/article/${article.category}/${article.slug}`}>
+          <Link key={article.id} href={`/article/${article.category?.slug || 'news'}/${article.slug}`}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -138,7 +143,7 @@ export default function LatestNews() {
                   />
                 )}
                 <div className="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 text-xs font-semibold rounded">
-                  {article.category.name}
+                  {article.category?.name || 'News'}
                 </div>
               </div>
               <div className="p-4">
