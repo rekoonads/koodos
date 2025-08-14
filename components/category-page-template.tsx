@@ -73,8 +73,10 @@ export default function CategoryPageTemplate({ categorySlug, categoryTitle }: Ca
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article, index) => (
-              <Link key={article.id} href={`/article/${categorySlug}/${article.slug}`}>
+            {articles.map((article, index) => {
+              const safeSlug = article.slug || article.id || 'article'
+              return (
+              <Link key={article.id} href={`/article/${categorySlug}/${safeSlug}`}>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -98,7 +100,8 @@ export default function CategoryPageTemplate({ categorySlug, categoryTitle }: Ca
                   </div>
                 </motion.div>
               </Link>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
