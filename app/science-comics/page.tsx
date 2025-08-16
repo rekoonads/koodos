@@ -1,6 +1,6 @@
 import { Atom, Rocket, BookOpen, Star, ArrowRight, Beaker } from "lucide-react"
 import Link from "next/link"
-import Footer from "@/components/Footer"
+import { Footer } from "@/components/footer"
 
 // Enhanced science articles with comprehensive metadata
 const scienceArticles = [
