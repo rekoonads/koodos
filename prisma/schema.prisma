@@ -1,0 +1,200 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  color       String?   @default("#6366f1")
+  icon        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  articles    Article[]
+  reviews     Review[]
+  
+  @@map("categories")
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String
+  featuredImage String?
+  imageAlt    String?
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  views       Int       @default(0)
+  likes       Int       @default(0)
+  bookmarks   Int       @default(0)
+  shares      Int       @default(0)
+  readTime    Int       @default(5) // in minutes
+  seoTitle    String?
+  seoDescription String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  
+  tags        Tag[]     @relation("ArticleTags")
+  comments    Comment[]
+  media       Media[]
+  
+  @@map("articles")
+}
+
+model Review {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String
+  featuredImage String?
+  imageAlt    String?
+  gameTitle   String
+  platform    String[]
+  genre       String[]
+  developer   String?
+  publisher   String?
+  releaseDate String?
+  rating      Float     @default(0) // 0-10 rating
+  pros        String[]
+  cons        String[]
+  scores      Json?     // { graphics: 9, gameplay: 8, story: 9, sound: 8, replayability: 7 }
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  views       Int       @default(0)
+  likes       Int       @default(0)
+  bookmarks   Int       @default(0)
+  shares      Int       @default(0)
+  readTime    Int       @default(8) // in minutes
+  seoTitle    String?
+  seoDescription String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  authorId    String
+  author      User      @relation(fields: [authorId], references: [id])
+  
+  tags        Tag[]     @relation("ReviewTags")
+  comments    Comment[]
+  media       Media[]
+  
+  @@map("reviews")
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  color     String?   @default("#6366f1")
+  createdAt DateTime  @default(now())
+  
+  articles  Article[] @relation("ArticleTags")
+  reviews   Review[]  @relation("ReviewTags")
+  
+  @@map("tags")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  clerkId   String    @unique
+  email     String    @unique
+  name      String?
+  avatar    String?
+  bio       String?
+  role      UserRole  @default(AUTHOR)
+  verified  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  articles  Article[]
+  reviews   Review[]
+  comments  Comment[]
+  
+  @@map("users")
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  content   String
+  likes     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  
+  articleId String?
+  article   Article?  @relation(fields: [articleId], references: [id])
+  
+  reviewId  String?
+  review    Review?   @relation(fields: [reviewId], references: [id])
+  
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  
+  @@map("comments")
+}
+
+model Media {
+  id        String    @id @default(cuid())
+  url       String
+  alt       String?
+  type      MediaType
+  size      Int?      // file size in bytes
+  width     Int?
+  height    Int?
+  createdAt DateTime  @default(now())
+  
+  articleId String?
+  article   Article?  @relation(fields: [articleId], references: [id])
+  
+  reviewId  String?
+  review    Review?   @relation(fields: [reviewId], references: [id])
+  
+  @@map("media")
+}
+
+model Newsletter {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  
+  @@map("newsletter")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  AUTHOR
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+}
