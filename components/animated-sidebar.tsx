@@ -340,7 +340,7 @@ export function AnimatedSidebar() {
               <div className="space-y-3 mb-6">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-sidebar-foreground hover:text-white hover:bg-sidebar-accent rounded-xl text-sm gaming-subtitle group"
+                  className="w-full justify-start text-white hover:text-white hover:bg-sidebar-accent rounded-xl text-sm gaming-subtitle group"
                   onClick={() => setIsSearchOpen(true)}
                 >
                   <div className="p-1.5 bg-sidebar-accent rounded-lg group-hover:bg-sidebar-primary transition-colors mr-3">
@@ -364,7 +364,7 @@ export function AnimatedSidebar() {
                   <Button className="w-full gaming-button text-xs py-2">Sign In</Button>
                   <Button
                     variant="outline"
-                    className="w-full border-sidebar-border text-sidebar-foreground hover:bg-sidebar-primary hover:text-white text-xs py-2 bg-transparent rounded-xl"
+                    className="w-full border-sidebar-border text-white hover:bg-sidebar-primary hover:text-white text-xs py-2 bg-transparent rounded-xl"
                   >
                     Sign Up
                   </Button>
