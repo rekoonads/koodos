@@ -1,38 +1,22 @@
-import type { Metadata } from "next"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Sidebar } from "@/components/sidebar"
-import { ShareButtons } from "@/components/share-buttons"
-import { RelatedArticles } from "@/components/related-articles"
-import { Star, ShoppingCart } from "lucide-react"
-import { SocialInteractions } from "@/components/social-interactions"
-import { EnhancedCommentSection } from "@/components/enhanced-comment-section"
+"use client"
 
-interface ReviewPageProps {
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Star } from "lucide-react"
+import Image from "next/image"
+
+interface PageProps {
   params: {
     slug: string
   }
 }
 
-// Mock review data
-const getReview = async (slug: string) => {
+async function getReview(slug: string) {
+  // Mock review data
   return {
     id: "1",
     title: "Cyberpunk 2077: Phantom Liberty Review",
     slug: "cyberpunk-2077-phantom-liberty-review",
-    content: `
-      <p>CD Projekt RED's ambitious expansion to Cyberpunk 2077 finally delivers on the promise of Night City. Phantom Liberty is a masterclass in storytelling and world-building.</p>
-      
-      <h2>Story & Characters</h2>
-      <p>The narrative follows V as they become entangled in a web of political intrigue involving the President of the New United States. Keanu Reeves returns as Johnny Silverhand, delivering some of his best performances in the series.</p>
-      
-      <h2>Gameplay Improvements</h2>
-      <p>The expansion introduces significant gameplay improvements, including a revamped skill system and enhanced AI behavior that makes combat more engaging than ever.</p>
-      
-      <h2>Visual Fidelity</h2>
-      <p>Night City has never looked better. The expansion showcases stunning visual improvements that truly bring the cyberpunk aesthetic to life.</p>
-    `,
     excerpt: "CD Projekt RED's ambitious expansion finally delivers on the promise of Night City",
     author: {
       name: "Sarah Martinez",
@@ -44,7 +28,7 @@ const getReview = async (slug: string) => {
     views: 25000,
     rating: 4.5,
     maxRating: 5,
-    gameInfo: {
+    game: {
       title: "Cyberpunk 2077: Phantom Liberty",
       developer: "CD Projekt RED",
       publisher: "CD Projekt",
@@ -72,50 +56,42 @@ const getReview = async (slug: string) => {
       "Limited to specific areas of Night City",
     ],
     featuredImage: "/cyberpunk-phantom-liberty.png",
-    gallery: ["/cyberpunk-gameplay-1.png", "/cyberpunk-gameplay-2.png", "/cyberpunk-gameplay-3.png"],
+    content: `
+      <p>CD Projekt RED's ambitious expansion to Cyberpunk 2077 finally delivers on the promise of Night City. Phantom Liberty is a masterclass in storytelling and world-building.</p>
+      
+      <h2>Story & Characters</h2>
+      <p>The narrative follows V as they become entangled in a web of political intrigue involving the President of the New United States. Keanu Reeves returns as Johnny Silverhand, delivering some of his best performances in the series.</p>
+      
+      <h2>Gameplay Improvements</h2>
+      <p>The expansion introduces significant gameplay improvements, including a revamped skill system and enhanced AI behavior that makes combat more engaging than ever.</p>
+      
+      <h2>Visual Fidelity</h2>
+      <p>Night City has never looked better. The expansion showcases stunning visual improvements that truly bring the cyberpunk aesthetic to life.</p>
+    `,
   }
 }
 
-export async function generateMetadata({ params }: ReviewPageProps): Promise<Metadata> {
-  const review = await getReview(params.slug)
-
-  return {
-    title: `${review.title} | KOODOS Reviews`,
-    description: review.excerpt,
-    openGraph: {
-      title: review.title,
-      description: review.excerpt,
-      images: [review.featuredImage],
-      type: "article",
-    },
-  }
-}
-
-export default async function ReviewPage({ params }: ReviewPageProps) {
+export default async function ReviewPage({ params }: PageProps) {
   const review = await getReview(params.slug)
 
   return (
-    <div className="min-h-screen bg-black">
-      <Sidebar />
-
-      <main className="ml-64 bg-gray-50 min-h-screen">
-        <article className="max-w-4xl mx-auto px-6 py-8">
-          {/* Review Header */}
+    <div className="min-h-screen bg-background">
+      <main className="max-w-4xl mx-auto px-6 py-8">
+        <article>
           <header className="mb-8">
             <Badge variant="secondary" className="bg-red-100 text-red-800 mb-4">
               Game Review
             </Badge>
 
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">{review.title}</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{review.title}</h1>
 
-            {/* Rating Display */}
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center gap-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-6 h-6 ${
+                      className={`w-5 h-5 ${
                         i < Math.floor(review.rating)
                           ? "text-yellow-400 fill-current"
                           : i < review.rating
@@ -131,27 +107,15 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
               </div>
             </div>
 
-            <p className="text-xl text-gray-600 mb-6 leading-relaxed">{review.excerpt}</p>
-
-            {/* Game Info Card */}
             <div className="bg-white rounded-lg p-6 mb-8 border">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-4">Game Information</h3>
                   <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="font-medium">Developer:</span> {review.gameInfo.developer}
-                    </div>
-                    <div>
-                      <span className="font-medium">Publisher:</span> {review.gameInfo.publisher}
-                    </div>
-                    <div>
-                      <span className="font-medium">Release Date:</span>{" "}
-                      {new Date(review.gameInfo.releaseDate).toLocaleDateString()}
-                    </div>
-                    <div>
-                      <span className="font-medium">Price:</span> {review.gameInfo.price}
-                    </div>
+                    <div><strong>Developer:</strong> {review.game.developer}</div>
+                    <div><strong>Publisher:</strong> {review.game.publisher}</div>
+                    <div><strong>Release Date:</strong> {review.game.releaseDate}</div>
+                    <div><strong>Price:</strong> {review.game.price}</div>
                   </div>
                 </div>
                 <div>
@@ -160,7 +124,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
                     <div>
                       <span className="font-medium text-sm">Platforms:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {review.gameInfo.platforms.map((platform) => (
+                        {review.game.platforms.map((platform) => (
                           <Badge key={platform} variant="outline" className="text-xs">
                             {platform}
                           </Badge>
@@ -170,7 +134,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
                     <div>
                       <span className="font-medium text-sm">Genre:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {review.gameInfo.genre.map((genre) => (
+                        {review.game.genre.map((genre) => (
                           <Badge key={genre} variant="outline" className="text-xs">
                             {genre}
                           </Badge>
@@ -180,19 +144,11 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
                   </div>
                 </div>
               </div>
-
-              <div className="mt-6 pt-6 border-t">
-                <Button className="bg-green-600 hover:bg-green-700">
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Buy Now - {review.gameInfo.price}
-                </Button>
-              </div>
             </div>
 
-            {/* Featured Image */}
             <div className="relative w-full h-96 mb-8 rounded-lg overflow-hidden">
               <Image
-                src={review.featuredImage || "/placeholder.svg"}
+                src={review.featuredImage}
                 alt={review.title}
                 fill
                 className="object-cover"
@@ -200,13 +156,12 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
             </div>
           </header>
 
-          {/* Score Breakdown */}
           <div className="bg-white rounded-lg p-6 mb-8 border">
             <h3 className="font-semibold text-gray-900 mb-4">Score Breakdown</h3>
             <div className="grid md:grid-cols-2 gap-4">
               {Object.entries(review.scores).map(([category, score]) => (
                 <div key={category} className="flex items-center justify-between">
-                  <span className="capitalize font-medium">{category.replace(/([A-Z])/g, " $1").trim()}:</span>
+                  <span className="capitalize font-medium">{category}:</span>
                   <div className="flex items-center gap-2">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
@@ -225,18 +180,16 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
             </div>
           </div>
 
-          {/* Review Content */}
           <div className="prose prose-lg max-w-none mb-8">
             <div dangerouslySetInnerHTML={{ __html: review.content }} />
           </div>
 
-          {/* Pros and Cons */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <div className="bg-green-50 rounded-lg p-6 border border-green-200">
               <h3 className="font-semibold text-green-800 mb-4">Pros</h3>
               <ul className="space-y-2">
                 {review.pros.map((pro, index) => (
-                  <li key={index} className="text-green-700 text-sm flex items-start gap-2">
+                  <li key={index} className="flex items-start gap-2 text-sm">
                     <span className="text-green-500 mt-1">+</span>
                     {pro}
                   </li>
@@ -248,7 +201,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
               <h3 className="font-semibold text-red-800 mb-4">Cons</h3>
               <ul className="space-y-2">
                 {review.cons.map((con, index) => (
-                  <li key={index} className="text-red-700 text-sm flex items-start gap-2">
+                  <li key={index} className="flex items-start gap-2 text-sm">
                     <span className="text-red-500 mt-1">-</span>
                     {con}
                   </li>
@@ -256,25 +209,6 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
               </ul>
             </div>
           </div>
-
-          {/* Social Interactions */}
-          <SocialInteractions
-            articleId={review.id}
-            initialLikes={567}
-            initialBookmarks={234}
-            initialShares={189}
-            initialComments={45}
-            initialViews={review.views}
-          />
-
-          {/* Share Buttons */}
-          <ShareButtons title={review.title} url={`https://koodos.in/reviews/${review.slug}`} />
-
-          {/* Related Reviews */}
-          <RelatedArticles currentSlug={review.slug} category="Reviews" />
-
-          {/* Enhanced Comments */}
-          <EnhancedCommentSection articleId={review.id} />
         </article>
       </main>
     </div>

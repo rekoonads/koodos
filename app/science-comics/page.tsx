@@ -1,10 +1,6 @@
-import { Atom, Rocket, BookOpen, Star, ArrowRight, Beaker } from "lucide-react"
-import Link from "next/link"
-import { Footer } from "@/components/footer"
 
 // Enhanced science articles with comprehensive metadata
 const scienceArticles = [
-  {
     id: 1,
     title: "Quantum Computing Breakthrough: IBM's 1000-Qubit Processor",
     category: "Technology",
@@ -22,8 +18,6 @@ const scienceArticles = [
     institution: "MIT",
     publishedIn: "Nature Physics",
     trending: true,
-  },
-  {
     id: 2,
     title: "Mars Rover Discovers Evidence of Ancient Microbial Life",
     category: "Space",
@@ -41,8 +35,6 @@ const scienceArticles = [
     institution: "NASA JPL",
     publishedIn: "Science",
     trending: true,
-  },
-  {
     id: 3,
     title: "CRISPR Gene Editing: New Treatment for Genetic Diseases",
     category: "Biology",
@@ -60,8 +52,6 @@ const scienceArticles = [
     institution: "Harvard Medical School",
     publishedIn: "Cell",
     trending: true,
-  },
-  {
     id: 4,
     title: "Climate Change: Antarctic Ice Sheet Melting Accelerates",
     category: "Environment",
@@ -79,12 +69,10 @@ const scienceArticles = [
     institution: "NOAA",
     publishedIn: "Nature Climate Change",
     trending: false,
-  },
 ]
 
 // Expanded comic reviews with detailed information
 const comicReviews = [
-  {
     id: 1,
     title: "The Sandman Universe: Dead Boy Detectives #1",
     publisher: "DC Comics",
@@ -103,8 +91,6 @@ const comicReviews = [
     comments: "234",
     reviews: "156",
     trending: false,
-  },
-  {
     id: 2,
     title: "Saga Volume 11",
     publisher: "Image Comics",
@@ -123,8 +109,6 @@ const comicReviews = [
     comments: "892",
     reviews: "445",
     trending: true,
-  },
-  {
     id: 3,
     title: "X-Men: From the Ashes #1",
     publisher: "Marvel Comics",
@@ -143,8 +127,6 @@ const comicReviews = [
     comments: "456",
     reviews: "289",
     trending: true,
-  },
-  {
     id: 4,
     title: "Invincible Iron Man #15",
     publisher: "Marvel Comics",
@@ -163,12 +145,10 @@ const comicReviews = [
     comments: "312",
     reviews: "178",
     trending: false,
-  },
 ]
 
 // Enhanced trending topics with more detailed data
 const trendingTopics = [
-  {
     id: 1,
     title: "Climate Change Solutions",
     category: "Environment",
@@ -176,8 +156,6 @@ const trendingTopics = [
     articles: 45,
     weeklyReads: "234K",
     description: "Latest research on renewable energy and carbon capture technologies",
-  },
-  {
     id: 2,
     title: "AI Ethics",
     category: "Technology",
@@ -185,8 +163,6 @@ const trendingTopics = [
     articles: 67,
     weeklyReads: "189K",
     description: "Discussions on responsible AI development and regulation",
-  },
-  {
     id: 3,
     title: "Space Exploration",
     category: "Astronomy",
@@ -194,8 +170,6 @@ const trendingTopics = [
     articles: 32,
     weeklyReads: "156K",
     description: "Updates on Mars missions and deep space discoveries",
-  },
-  {
     id: 4,
     title: "Genetic Engineering",
     category: "Biology",
@@ -203,62 +177,47 @@ const trendingTopics = [
     articles: 28,
     weeklyReads: "98K",
     description: "Advances in CRISPR and gene therapy applications",
-  },
 ]
 
 // Added research papers and scientific breakthroughs
 const researchPapers = [
-  {
     title: "Quantum Entanglement in Biological Systems",
     journal: "Nature Physics",
     authors: "Dr. Lisa Zhang, Dr. Robert Kim",
     citations: 1247,
     impact: "High",
-  },
-  {
     title: "Machine Learning for Drug Discovery",
     journal: "Science",
     authors: "Dr. Maria Santos, Dr. David Chen",
     citations: 892,
     impact: "Very High",
-  },
-  {
     title: "Renewable Energy Storage Solutions",
     journal: "Nature Energy",
     authors: "Dr. John Wilson, Dr. Sarah Lee",
     citations: 634,
     impact: "High",
-  },
 ]
 
 const upcomingComics = [
-  {
     title: "Batman: The Brave and the Bold #1",
     publisher: "DC Comics",
     releaseDate: "March 15, 2024",
     writer: "Tom King",
     preOrder: true,
-  },
-  {
     title: "Spider-Man: Shadow of the Green Goblin #1",
     publisher: "Marvel Comics",
     releaseDate: "March 22, 2024",
     writer: "Dan Slott",
     preOrder: true,
-  },
-  {
     title: "The Walking Dead: All Out War Anniversary Edition",
     publisher: "Image Comics",
     releaseDate: "April 5, 2024",
     writer: "Robert Kirkman",
     preOrder: false,
-  },
 ]
 
-export default function ScienceComicsPage() {
   return (
     <div className="bg-white min-h-screen">
-      {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/science-pattern.png')] opacity-10"></div>
         <div className="absolute inset-0">
@@ -270,12 +229,9 @@ export default function ScienceComicsPage() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <Atom className="w-10 h-10 mr-4 text-emerald-400 animate-spin" />
                 <span className="text-emerald-300 font-semibold tracking-wide text-lg">KOODOS SCIENCE & COMICS</span>
-                <BookOpen className="w-10 h-10 ml-4 text-cyan-400" />
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 lg:mb-8">
-                Science{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400">
                   & Comics
                 </span>
@@ -287,19 +243,16 @@ export default function ScienceComicsPage() {
               <div className="flex flex-wrap justify-center gap-4 mb-12">
                 <div className="group bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-lg hover:shadow-emerald-500/25">
                   <span className="flex items-center">
-                    <Beaker className="w-5 h-5 mr-2" />
                     Science
                   </span>
                 </div>
                 <div className="group bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-lg hover:shadow-teal-500/25">
                   <span className="flex items-center">
-                    <BookOpen className="w-5 h-5 mr-2" />
                     Comics
                   </span>
                 </div>
                 <div className="group bg-gradient-to-r from-cyan-600 to-emerald-500 hover:from-cyan-500 hover:to-emerald-400 px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25">
                   <span className="flex items-center">
-                    <Rocket className="w-5 h-5 mr-2" />
                     Research
                   </span>
                 </div>
@@ -330,7 +283,6 @@ export default function ScienceComicsPage() {
 
       <div className="px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
         <div className="max-w-7xl mx-auto">
-          {/* Research Papers Section */}
           <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
@@ -341,48 +293,34 @@ export default function ScienceComicsPage() {
                 href="/science-comics/research"
                 className="text-blue-600 hover:text-blue-800 font-medium flex items-center"
               >
-                View All Papers <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {researchPapers.map((paper, index) => (
-                <Link key={index} href={`/science-comics/research/${index + 1}`} className="group">
                   <div className="bg-gradient-to-br from-blue-50 to-emerald-50 border border-blue-200 hover:border-blue-300 p-6 rounded-xl transition-all duration-300 hover:shadow-lg group-hover:scale-[1.02]">
                     <div className="flex items-center justify-between mb-3">
                       <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium">
-                        {paper.journal}
                       </span>
                       <span
-                        className={`text-xs px-2 py-1 rounded ${
                           paper.impact === "Very High"
                             ? "bg-red-100 text-red-600"
                             : paper.impact === "High"
                               ? "bg-orange-100 text-orange-600"
                               : "bg-green-100 text-green-600"
-                        }`}
                       >
-                        {paper.impact} Impact
                       </span>
                     </div>
                     <h3 className="font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                      {paper.title}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-4">{paper.authors}</p>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3" />
-                        <span>{paper.citations} citations</span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </div>
                 </Link>
-              ))}
             </div>
           </div>
 
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 lg:gap-12 mb-16">
             <div className="xl:col-span-3">
               <div className="flex items-center mb-8">
@@ -391,8 +329,6 @@ export default function ScienceComicsPage() {
               </div>
 
               <div className="space-y-8">
-                {scienceArticles.map((article) => (
-                  <Link key={article.id} href={`/science-comics/articles/${article.id}`} className="block">
                     <div className="group bg-white border border-gray-200 hover:border-emerald-300 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 overflow-hidden rounded-2xl">
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
                         <div className="lg:col-span-1">
@@ -402,25 +338,19 @@ export default function ScienceComicsPage() {
                             </div>
                             <div className="absolute top-4 left-4 flex gap-2">
                               <span className="bg-emerald-600 text-white text-xs px-3 py-1 rounded-full font-medium">
-                                {article.category}
                               </span>
-                              {article.trending && (
                                 <span className="bg-red-600 text-white text-xs px-3 py-1 rounded-full font-medium">
                                   Trending
                                 </span>
-                              )}
                             </div>
                             <div className="absolute bottom-4 right-4">
                               <span
-                                className={`text-xs px-2 py-1 rounded ${
                                   article.difficulty === "Advanced"
                                     ? "bg-red-100 text-red-600"
                                     : article.difficulty === "Intermediate"
                                       ? "bg-yellow-100 text-yellow-600"
                                       : "bg-green-100 text-green-600"
-                                }`}
                               >
-                                {article.difficulty}
                               </span>
                             </div>
                           </div>
@@ -429,105 +359,71 @@ export default function ScienceComicsPage() {
                         <div className="lg:col-span-2 p-6 lg:p-8">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center space-x-3">
-                              <span className="text-sm text-gray-500">{article.institution}</span>
-                              <span className="text-sm text-emerald-600 font-medium">{article.publishedIn}</span>
                             </div>
                             <div className="flex items-center space-x-4 text-sm text-gray-500">
-                              <span>{article.views}</span>
-                              <span>{article.readTime}</span>
                             </div>
                           </div>
 
                           <h3 className="text-xl lg:text-2xl font-bold mb-4 text-gray-900 group-hover:text-emerald-600 transition-colors leading-tight">
-                            {article.title}
                           </h3>
 
-                          <p className="text-gray-600 mb-4 leading-relaxed text-lg">{article.description}</p>
 
                           <div className="flex flex-wrap gap-2 mb-4">
-                            {article.tags.map((tag, index) => (
-                              <span key={index} className="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded">
-                                #{tag}
                               </span>
-                            ))}
                           </div>
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-6 text-sm text-gray-500">
-                              <span>By {article.author}</span>
-                              <span>{article.date}</span>
                             </div>
-                            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" />
                           </div>
                         </div>
                       </div>
                     </div>
                   </Link>
-                ))}
               </div>
             </div>
 
             <div className="xl:col-span-1 space-y-8">
               <div className="bg-gradient-to-br from-emerald-50 to-cyan-50 rounded-2xl p-6 lg:p-8 border border-emerald-200 sticky top-8">
                 <div className="flex items-center mb-6">
-                  <Rocket className="w-6 h-6 mr-3 text-emerald-600" />
                   <h3 className="text-xl font-bold text-gray-900">Trending Topics</h3>
                 </div>
 
                 <div className="space-y-4">
-                  {trendingTopics.map((topic, index) => (
-                    <Link key={topic.id} href={`/science-comics/topics/${topic.id}`} className="block">
                       <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-emerald-100 hover:border-emerald-200 transition-colors group">
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                            {index + 1}
                           </div>
                           <div>
                             <div className="font-semibold text-gray-900 text-sm group-hover:text-emerald-600 transition-colors">
-                              {topic.title}
                             </div>
-                            <div className="text-xs text-gray-500">{topic.description}</div>
-                            <div className="text-xs text-gray-500">{topic.weeklyReads} weekly reads</div>
                           </div>
                         </div>
-                        <div className="text-emerald-600 font-bold text-sm">{topic.trend}</div>
                       </div>
                     </Link>
-                  ))}
                 </div>
               </div>
 
               <div className="bg-gradient-to-br from-cyan-50 to-emerald-50 rounded-2xl p-6 border border-cyan-200">
                 <div className="flex items-center mb-6">
-                  <BookOpen className="w-6 h-6 mr-3 text-cyan-600" />
                   <h3 className="text-xl font-bold text-gray-900">Upcoming Comics</h3>
                 </div>
 
                 <div className="space-y-4">
-                  {upcomingComics.map((comic, index) => (
-                    <div key={index} className="p-4 bg-white rounded-xl border border-cyan-100">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-cyan-600">{comic.publisher}</span>
                         <span
-                          className={`text-xs px-2 py-1 rounded ${
                             comic.preOrder ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"
-                          }`}
                         >
-                          {comic.preOrder ? "Pre-Order" : "Coming Soon"}
                         </span>
                       </div>
-                      <h4 className="font-medium text-sm text-gray-900 mb-1">{comic.title}</h4>
                       <div className="text-xs text-gray-500">
-                        {comic.writer} • {comic.releaseDate}
                       </div>
                     </div>
-                  ))}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Comic Reviews Section */}
           <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
@@ -538,13 +434,10 @@ export default function ScienceComicsPage() {
                 href="/science-comics/comics"
                 className="text-cyan-600 hover:text-cyan-800 font-medium flex items-center"
               >
-                View All Comics <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
-              {comicReviews.map((comic) => (
-                <Link key={comic.id} href={`/science-comics/comics/${comic.id}`} className="group">
                   <div className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-200 hover:border-cyan-200 overflow-hidden rounded-2xl bg-white">
                     <div className="relative overflow-hidden">
                       <div className="aspect-[3/4] bg-gradient-to-br from-cyan-100 to-emerald-100 relative">
@@ -553,63 +446,44 @@ export default function ScienceComicsPage() {
                         </div>
                         <div className="absolute top-4 left-4 flex gap-2">
                           <span className="bg-white/90 text-gray-800 text-xs font-medium px-2 py-1 rounded">
-                            {comic.publisher}
                           </span>
-                          {comic.trending && (
                             <span className="bg-cyan-600 text-white text-xs font-medium px-2 py-1 rounded">
                               Trending
                             </span>
-                          )}
                         </div>
                         <div className="absolute top-4 right-4">
                           <div className="flex items-center space-x-1 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                            <Star className="w-3 h-3 fill-current text-yellow-400" />
-                            <span>{comic.rating}</span>
                           </div>
                         </div>
                         <div className="absolute bottom-4 right-4 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                          {comic.price}
                         </div>
                       </div>
                     </div>
 
                     <div className="p-6">
                       <h3 className="text-lg font-bold mb-3 group-hover:text-cyan-600 transition-colors leading-tight line-clamp-2">
-                        {comic.title}
                       </h3>
 
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{comic.description}</p>
 
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-                        <span className="font-medium">{comic.writer}</span>
-                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{comic.genre}</span>
                       </div>
 
                       <div className="text-xs text-gray-500 mb-3">
-                        <div>Art: {comic.artist}</div>
-                        <div>Colors: {comic.colorist}</div>
                         <div>
-                          {comic.pages} pages • {comic.releaseDate}
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                         <div className="flex items-center space-x-3 text-xs text-gray-500">
-                          <span>{comic.likes} likes</span>
-                          <span>{comic.reviews} reviews</span>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-cyan-600 transition-colors" />
                       </div>
                     </div>
                   </div>
                 </Link>
-              ))}
             </div>
           </div>
         </div>
       </div>
 
-      <Footer />
     </div>
   )
-}

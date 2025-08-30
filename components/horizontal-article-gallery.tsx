@@ -279,7 +279,7 @@ export function HorizontalArticleGallery({
 
                     <div className="absolute top-4 left-4">
                       <span className="gaming-badge-primary shadow-lg backdrop-blur-sm">
-                        {article.category}
+                        {typeof article.category === 'string' ? article.category : (article.category as any)?.name || 'Article'}
                       </span>
                     </div>
 
@@ -304,7 +304,7 @@ export function HorizontalArticleGallery({
                     <div className="flex items-center justify-between text-xs lg:text-sm text-muted-foreground pt-3 border-t border-border">
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4" />
-                        <span className="font-medium">{article.author}</span>
+                        <span className="font-medium">{typeof article.author === 'string' ? article.author : (article.author as any)?.name || 'KOODOS'}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />

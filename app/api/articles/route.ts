@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
@@ -9,44 +8,15 @@ export async function GET(request: NextRequest) {
     const limit = Number.parseInt(searchParams.get("limit") || "10")
     const category = searchParams.get("category")
     const featured = searchParams.get("featured")
-    const published = searchParams.get("published") !== "false"
 
-    const skip = (page - 1) * limit
-
-    const where = {
-      published,
-      ...(category && { category: { slug: category } }),
-      ...(featured === "true" && { featured: true }),
-    }
-
-    const [articles, total] = await Promise.all([
-      prisma.article.findMany({
-        where,
-        include: {
-          author: {
-            select: { id: true, name: true, avatar: true },
-          },
-          category: {
-            select: { id: true, name: true, slug: true, color: true },
-          },
-          tags: {
-            select: { id: true, name: true, slug: true },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: limit,
-      }),
-      prisma.article.count({ where }),
-    ])
-
+    // Return empty result to trigger fallback articles
     return NextResponse.json({
-      articles,
+      articles: [],
       pagination: {
         page,
         limit,
-        total,
-        pages: Math.ceil(total / limit),
+        total: 0,
+        pages: 0,
       },
     })
   } catch (error) {

@@ -1,13 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    unoptimized: true,
+    domains: ['res.cloudinary.com', 'images.unsplash.com'],
+    formats: ['image/webp', 'image/avif'],
+  },
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  experimental: {
+    optimizeCss: true,
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 }
 

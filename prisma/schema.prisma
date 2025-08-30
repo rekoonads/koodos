@@ -8,7 +8,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model Category {
@@ -131,6 +130,7 @@ model User {
   articles  Article[]
   reviews   Review[]
   comments  Comment[]
+  reactions Reaction[]
   
   @@map("users")
 }
@@ -138,7 +138,6 @@ model User {
 model Comment {
   id        String    @id @default(cuid())
   content   String
-  likes     Int       @default(0)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   
@@ -154,6 +153,7 @@ model Comment {
   parentId  String?
   parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
   replies   Comment[] @relation("CommentReplies")
+  reactions Reaction[]
   
   @@map("comments")
 }
@@ -184,6 +184,30 @@ model Newsletter {
   createdAt DateTime  @default(now())
   
   @@map("newsletter")
+}
+
+model Reaction {
+  id          String       @id @default(cuid())
+  type        ReactionType
+  createdAt   DateTime     @default(now())
+
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+
+  commentId   String
+  comment     Comment      @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId, type])
+  @@map("reactions")
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  HAHA
+  WOW
+  SAD
+  ANGRY
 }
 
 enum UserRole {

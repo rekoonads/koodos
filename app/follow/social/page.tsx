@@ -1,68 +1,48 @@
-import { Footer } from "@/components/footer"
-import { Facebook, Twitter, Instagram, Youtube, Twitch, MessageCircle, Share2, Users, TrendingUp, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import { BannerCarousel } from "@/components/banner-carousel"
 
-export default function SocialPage() {
   const socialPlatforms = [
-    {
       name: "Facebook",
       icon: Facebook,
       url: "https://facebook.com/koodos",
       followers: "25K",
       description: "Daily gaming news and community discussions",
       color: "bg-blue-600",
-    },
-    {
       name: "Twitter",
       icon: Twitter,
       url: "https://twitter.com/koodos",
       followers: "45K",
       description: "Real-time gaming updates and breaking news",
       color: "bg-sky-500",
-    },
-    {
       name: "Instagram",
       icon: Instagram,
       url: "https://instagram.com/koodos",
       followers: "30K",
       description: "Gaming screenshots, behind-the-scenes content",
       color: "bg-pink-600",
-    },
-    {
       name: "YouTube",
       icon: Youtube,
       url: "https://youtube.com/koodos",
       followers: "100K",
       description: "Game reviews, tutorials, and live streams",
       color: "bg-red-600",
-    },
-    {
       name: "Twitch",
       icon: Twitch,
       url: "https://twitch.tv/koodos",
       followers: "15K",
       description: "Live gaming streams and community events",
       color: "bg-purple-600",
-    },
-    {
       name: "Discord",
       icon: MessageCircle,
       url: "https://discord.gg/koodos",
       followers: "8K",
       description: "Join our gaming community for discussions",
       color: "bg-indigo-600",
-    },
   ]
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Banner Carousel */}
       <div className="px-4 sm:px-6 lg:px-8 py-8">
-        <BannerCarousel />
       </div>
       
-      {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/social-pattern.png')] opacity-10"></div>
         <div className="absolute inset-0">
@@ -73,12 +53,9 @@ export default function SocialPage() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <Share2 className="w-10 h-10 mr-4 text-blue-400" />
                 <span className="text-blue-300 font-semibold tracking-wide text-lg">FOLLOW KOODOS</span>
-                <Share2 className="w-10 h-10 ml-4 text-blue-400" />
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 lg:mb-8">
-                Social{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
                   Media
                 </span>
@@ -113,28 +90,17 @@ export default function SocialPage() {
       <div className="px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {socialPlatforms.map((platform, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 group">
-                <div className={`${platform.color} p-6 text-white`}>
                   <div className="flex items-center justify-between mb-4">
-                    <platform.icon className="w-8 h-8" />
-                    <span className="text-2xl font-bold">{platform.followers}</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{platform.name}</h3>
-                  <p className="text-sm opacity-90">{platform.description}</p>
                 </div>
                 <div className="p-6">
                   <a
-                    href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center justify-center w-full px-4 py-2 ${platform.color} text-white rounded-lg hover:opacity-90 transition-opacity group-hover:scale-105`}
                   >
-                    Follow on {platform.name}
                   </a>
                 </div>
               </div>
-            ))}
           </div>
 
           <div className="mt-16 text-center">
@@ -147,7 +113,5 @@ export default function SocialPage() {
         </div>
       </div>
 
-      <Footer />
     </div>
   )
-}

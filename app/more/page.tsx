@@ -1,6 +1,4 @@
-import { Footer } from "@/components/footer"
 
-export default function MorePage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="ml-64">
@@ -70,8 +68,6 @@ export default function MorePage() {
           </div>
         </div>
 
-        <Footer />
       </div>
     </div>
   )
-}

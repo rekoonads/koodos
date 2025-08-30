@@ -13,6 +13,8 @@ interface UserProfileCardProps {
 
 export function UserProfileCard({ showStats = true, compact = false }: UserProfileCardProps) {
   const { user } = useUser()
+  const displayName = user?.fullName || (user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.username);
+
 
   const mockStats = {
     reviews: 42,
@@ -25,11 +27,11 @@ export function UserProfileCard({ showStats = true, compact = false }: UserProfi
     return (
       <div className="flex items-center space-x-3">
         <Avatar className="w-8 h-8">
-          <AvatarImage src={user?.imageUrl || "/diverse-gaming-avatars.png"} alt={user?.fullName || "User"} />
-          <AvatarFallback>{user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+          <AvatarImage src={user?.imageUrl || "/diverse-gaming-avatars.png"} alt={displayName || "User"} />
+          <AvatarFallback>{displayName?.charAt(0) || "U"}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-medium text-gray-900">{user?.fullName || "Demo User"}</p>
+          <p className="font-medium text-gray-900">{displayName || "Demo User"}</p>
           <p className="text-sm text-gray-600">@{user?.username || "demo_gamer"}</p>
         </div>
       </div>
@@ -41,12 +43,12 @@ export function UserProfileCard({ showStats = true, compact = false }: UserProfi
       <CardContent className="p-6">
         <div className="flex items-center space-x-4">
           <Avatar className="w-16 h-16">
-            <AvatarImage src={user?.imageUrl || "/diverse-gaming-avatars.png"} alt={user?.fullName || "User"} />
-            <AvatarFallback className="text-xl">{user?.fullName?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarImage src={user?.imageUrl || "/diverse-gaming-avatars.png"} alt={displayName || "User"} />
+            <AvatarFallback className="text-xl">{displayName?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900">{user?.fullName || "Demo User"}</h3>
+            <h3 className="text-xl font-bold text-gray-900">{displayName || "Demo User"}</h3>
             <p className="text-gray-600">@{user?.username || "demo_gamer"}</p>
 
             <div className="flex items-center space-x-2 mt-2">

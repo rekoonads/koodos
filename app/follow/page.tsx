@@ -1,6 +1,4 @@
-import { Footer } from "@/components/footer"
 
-export default function FollowPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="ml-64">
@@ -66,8 +64,6 @@ export default function FollowPage() {
           </div>
         </div>
 
-        <Footer />
       </div>
     </div>
   )
-}

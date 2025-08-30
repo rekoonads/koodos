@@ -1,9 +1,9 @@
-import { Footer } from "@/components/footer"
+"use client"
+
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, Video, Trophy, ThumbsUp, MessageCircle, TrendingUp, Award, Target, BarChart3, ArrowRight, Users, Clock, Eye } from "lucide-react"
+import { Star, ThumbsUp, MessageCircle, Clock, Trophy, Film } from "lucide-react"
 import Link from "next/link"
-import { BannerCarousel } from "@/components/banner-carousel"
 
 export default function MovieReviewsPage() {
   const movieReviews = [
@@ -20,7 +20,7 @@ export default function MovieReviewsPage() {
       readTime: "18 min read",
       director: "Denis Villeneuve",
       genre: "Sci-Fi",
-      releaseDate: "Mar 2024",
+      releaseDate: "Mar 2024"
     },
     {
       title: "Poor Things Review",
@@ -35,7 +35,7 @@ export default function MovieReviewsPage() {
       readTime: "15 min read",
       director: "Yorgos Lanthimos",
       genre: "Drama",
-      releaseDate: "Dec 2023",
+      releaseDate: "Dec 2023"
     },
     {
       title: "The Zone of Interest Review",
@@ -50,7 +50,7 @@ export default function MovieReviewsPage() {
       readTime: "16 min read",
       director: "Jonathan Glazer",
       genre: "Drama",
-      releaseDate: "Dec 2023",
+      releaseDate: "Dec 2023"
     },
     {
       title: "Killers of the Flower Moon Review",
@@ -65,7 +65,7 @@ export default function MovieReviewsPage() {
       readTime: "20 min read",
       director: "Martin Scorsese",
       genre: "Crime",
-      releaseDate: "Oct 2023",
+      releaseDate: "Oct 2023"
     },
     {
       title: "Oppenheimer Review",
@@ -80,7 +80,7 @@ export default function MovieReviewsPage() {
       readTime: "22 min read",
       director: "Christopher Nolan",
       genre: "Biography",
-      releaseDate: "Jul 2023",
+      releaseDate: "Jul 2023"
     },
     {
       title: "Barbie Review",
@@ -95,16 +95,14 @@ export default function MovieReviewsPage() {
       readTime: "14 min read",
       director: "Greta Gerwig",
       genre: "Comedy",
-      releaseDate: "Jul 2023",
-    },
+      releaseDate: "Jul 2023"
+    }
   ]
 
   const topRatedMovies = [
-    { name: "Dune: Part Two", rating: 9.2, category: "Sci-Fi" },
-    { name: "Oppenheimer", rating: 9.1, category: "Biography" },
-    { name: "The Zone of Interest", rating: 9.0, category: "Drama" },
-    { name: "Poor Things", rating: 8.8, category: "Drama" },
-    { name: "Killers of the Flower Moon", rating: 8.5, category: "Crime" },
+    { title: "Dune: Part Two", rating: 9.2, rank: 1 },
+    { title: "Oppenheimer", rating: 9.1, rank: 2 },
+    { title: "The Zone of Interest", rating: 9.0, rank: 3 }
   ]
 
   const getRatingColor = (rating: number) => {
@@ -115,64 +113,25 @@ export default function MovieReviewsPage() {
     return "text-red-400 bg-red-500/20 border-red-500/30"
   }
 
-  const getRatingBadge = (rating: number) => {
-    if (rating >= 9) return { text: "Masterpiece", color: "bg-green-600" }
-    if (rating >= 8) return { text: "Excellent", color: "bg-blue-600" }
-    if (rating >= 7) return { text: "Good", color: "bg-yellow-600" }
-    if (rating >= 6) return { text: "Fair", color: "bg-orange-600" }
-    return { text: "Poor", color: "bg-red-600" }
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Banner Carousel */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
-        <BannerCarousel />
-      </div>
-      
-      {/* Hero Section */}
+    <div className="min-h-screen bg-black text-white">
       <div className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/movie-pattern.png')] opacity-10"></div>
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl"></div>
-        </div>
         <div className="relative px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
           <div className="max-w-7xl mx-auto">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <Video className="w-10 h-10 mr-4 text-purple-400" />
+                <Film className="w-8 h-8 text-purple-300 mr-3" />
                 <span className="text-purple-300 font-semibold tracking-wide text-lg">MOVIE REVIEWS</span>
-                <Video className="w-10 h-10 ml-4 text-purple-400" />
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 lg:mb-8">
-                Movie{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-red-400">
-                  Reviews
+                  Movie Reviews
                 </span>
               </h1>
               <p className="text-lg sm:text-xl lg:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
                 In-depth reviews and ratings for the latest films across all genres
               </p>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8 max-w-4xl mx-auto">
-                <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-purple-400 mb-2">500+</div>
-                  <div className="text-sm lg:text-base text-gray-400">Movie Reviews</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-pink-400 mb-2">8.7</div>
-                  <div className="text-sm lg:text-base text-gray-400">Average Rating</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-red-400 mb-2">85K+</div>
-                  <div className="text-sm lg:text-base text-gray-400">Monthly Readers</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl lg:text-5xl font-bold text-purple-400 mb-2">All</div>
-                  <div className="text-sm lg:text-base text-gray-400">Genres</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -184,65 +143,57 @@ export default function MovieReviewsPage() {
             <div className="xl:col-span-3">
               <div className="flex items-center mb-8">
                 <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-16 mr-4"></div>
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">Latest Movie Reviews</h2>
+                <h2 className="text-3xl lg:text-4xl font-bold text-white">Latest Movie Reviews</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {movieReviews.map((review, index) => (
-                  <Link key={index} href={`/reviews/movies/${index + 1}`} className="group">
-                    <Card className="bg-white hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] border border-gray-200 hover:border-purple-300 overflow-hidden">
+                {movieReviews.map((movie, index) => (
+                  <Link key={index} href={`/reviews/movies/${movie.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+                    <Card className="bg-gray-900 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-gray-700 hover:border-purple-500 overflow-hidden group cursor-pointer">
                       <div className="relative">
                         <img
-                          src={review.image}
-                          alt={review.title}
+                          src={movie.image}
+                          alt={movie.title}
                           className="w-full h-48 object-cover"
                         />
                         <div className="absolute top-3 left-3 flex gap-2">
                           <Badge className="bg-purple-600 text-white font-medium">
-                            {review.category}
-                          </Badge>
-                          <Badge className="bg-pink-600 text-white font-medium">
-                            {review.genre}
+                            {movie.category}
                           </Badge>
                         </div>
-                        <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm">
-                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          <span className="font-medium">{review.rating}</span>
+                        <div className="absolute top-3 right-3">
+                          <div className={`px-3 py-2 rounded-xl border font-bold text-lg ${getRatingColor(movie.rating)}`}>
+                            {movie.rating}
+                          </div>
                         </div>
                         <div className="absolute bottom-3 left-3">
-                          <Badge className={`${getRatingBadge(review.rating).color} text-white font-bold px-3 py-1`}>
-                            {getRatingBadge(review.rating).text}
+                          <Badge className="bg-black/70 text-white">
+                            {movie.director}
                           </Badge>
                         </div>
                       </div>
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-3">
-                          <Badge className="bg-gray-100 text-gray-800 font-semibold">{review.director}</Badge>
-                          <span className="text-sm text-gray-500">{review.date}</span>
+                          <span className="text-sm text-gray-400">{movie.author}</span>
+                          <span className="text-sm text-gray-400">{movie.date}</span>
                         </div>
-                        <CardTitle className="text-lg mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">
-                          {review.title}
+                        <CardTitle className="text-lg mb-3 text-white group-hover:text-purple-400 transition-colors line-clamp-2">
+                          {movie.title}
                         </CardTitle>
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{review.excerpt}</p>
+                        <p className="text-gray-400 mb-4 line-clamp-2">{movie.excerpt}</p>
                         <div className="flex items-center justify-between text-xs text-gray-500">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
-                              <Users className="w-3 h-3" />
-                              <span>{review.author}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{review.readTime}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
                               <ThumbsUp className="w-3 h-3" />
-                              <span>{review.likes}</span>
+                              <span>{movie.likes}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <MessageCircle className="w-3 h-3" />
-                              <span>{review.comments}</span>
+                              <span>{movie.comments}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              <span>{movie.readTime}</span>
                             </div>
                           </div>
                         </div>
@@ -254,51 +205,47 @@ export default function MovieReviewsPage() {
             </div>
 
             <div className="xl:col-span-1">
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 lg:p-8 border border-purple-200 sticky top-8">
+              <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-2xl p-6 lg:p-8 border border-purple-500/30 sticky top-8">
                 <div className="flex items-center mb-6">
-                  <BarChart3 className="w-6 h-6 mr-3 text-purple-600" />
-                  <h3 className="text-xl font-bold text-gray-900">Top Rated Movies</h3>
+                  <Trophy className="w-6 h-6 text-purple-400 mr-3" />
+                  <h3 className="text-xl font-bold text-white">Top Rated Movies</h3>
                 </div>
 
                 <div className="space-y-4">
                   {topRatedMovies.map((movie, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 bg-white rounded-xl border border-purple-100 hover:border-purple-200 transition-colors"
+                      className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-purple-500/20 hover:border-purple-500/40 transition-colors"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                          {index + 1}
+                          {movie.rank}
                         </div>
-                        <div>
-                          <div className="font-semibold text-gray-900 text-sm">{movie.name}</div>
-                          <div className="text-xs text-gray-500">{movie.category}</div>
-                        </div>
+                        <div className="font-semibold text-white text-sm">{movie.title}</div>
                       </div>
-                      <div className={`px-3 py-1 rounded-lg border ${getRatingColor(movie.rating)} font-bold text-sm`}>
+                      <div className={`px-2 py-1 rounded-lg text-sm font-bold ${getRatingColor(movie.rating)}`}>
                         {movie.rating}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-8 p-4 bg-white rounded-xl border border-purple-100">
+                <div className="mt-8 p-4 bg-gray-800/50 rounded-xl border border-purple-500/20">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-semibold text-gray-900">Review Stats</h4>
-                    <TrendingUp className="w-5 h-5 text-green-500" />
+                    <h4 className="font-semibold text-white">Review Stats</h4>
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">This Month</span>
-                      <span className="font-semibold text-gray-900">15 Reviews</span>
+                      <span className="text-sm text-gray-400">This Month</span>
+                      <span className="font-semibold text-white">15 Reviews</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Avg Rating</span>
-                      <span className="font-semibold text-purple-600">8.7/10</span>
+                      <span className="text-sm text-gray-400">Avg Rating</span>
+                      <span className="font-semibold text-purple-400">8.7/10</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Total Views</span>
-                      <span className="font-semibold text-gray-900">2.1M</span>
+                      <span className="text-sm text-gray-400">Total Views</span>
+                      <span className="font-semibold text-white">2.1M</span>
                     </div>
                   </div>
                 </div>
@@ -307,8 +254,6 @@ export default function MovieReviewsPage() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

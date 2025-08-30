@@ -1,10 +1,6 @@
-import { Sidebar } from "@/components/sidebar"
-import { Footer } from "@/components/footer"
 
-export default function TermsPage() {
   return (
     <div className="min-h-screen bg-black">
-      <Sidebar />
 
       <main className="ml-64 bg-gray-50 min-h-screen">
         <div className="max-w-4xl mx-auto px-6 py-8">
@@ -68,8 +64,6 @@ export default function TermsPage() {
             </section>
           </div>
         </div>
-        <Footer />
       </main>
     </div>
   )
-}

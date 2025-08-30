@@ -259,7 +259,8 @@ export async function fetchArticles(params?: {
     if (params?.category) searchParams.set("category", params.category)
     if (params?.featured) searchParams.set("featured", "true")
 
-    const response = await fetch(`/api/articles?${searchParams.toString()}`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+    const response = await fetch(`${apiUrl}/public/articles?${searchParams.toString()}`)
 
     if (!response.ok) {
       throw new Error("Failed to fetch articles")
@@ -305,7 +306,7 @@ export async function fetchReviews(params?: {
     if (params?.category) searchParams.set("category", params.category)
     if (params?.featured) searchParams.set("featured", "true")
 
-    const response = await fetch(`/api/reviews?${searchParams.toString()}`)
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/reviews?${searchParams.toString()}`)
 
     if (!response.ok) {
       throw new Error("Failed to fetch reviews")

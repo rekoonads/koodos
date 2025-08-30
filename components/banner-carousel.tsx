@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight, Play, Star, Clock, User } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { getBannerImageUrl } from "@/lib/cloudinary"
 
 interface BannerSlide {
   id: string
@@ -69,7 +70,7 @@ const bannerSlides: BannerSlide[] = [
     subtitle: "Upcoming Games Revealed",
     description:
       "Breaking down the biggest announcements from Nintendo's latest Direct presentation, including release dates and exclusive gameplay footage.",
-    image: "/nintendo-direct-news.png",
+    image: "/nintendo-direct.png",
     category: "Gaming News",
     rating: 4.6,
     author: "Emma Wilson",

@@ -1,13 +1,5 @@
-import { Footer } from "@/components/footer"
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Star, Gamepad2, Trophy, ThumbsUp, MessageCircle, TrendingUp, Award, Target, BarChart3, ArrowRight, Users, Clock, Eye } from "lucide-react"
-import Link from "next/link"
-import { BannerCarousel } from "@/components/banner-carousel"
 
-export default function NintendoPage() {
   const nintendoGames = [
-    {
       title: "Super Mario Bros. Wonder",
       rating: 9.8,
       category: "Platformer",
@@ -21,8 +13,6 @@ export default function NintendoPage() {
       platform: "Nintendo Switch",
       genre: "Platformer",
       releaseDate: "Oct 2023",
-    },
-    {
       title: "The Legend of Zelda: Tears of the Kingdom",
       rating: 9.9,
       category: "Action-Adventure",
@@ -36,8 +26,6 @@ export default function NintendoPage() {
       platform: "Nintendo Switch",
       genre: "Action-Adventure",
       releaseDate: "May 2023",
-    },
-    {
       title: "Pokémon Scarlet & Violet",
       rating: 8.5,
       category: "RPG",
@@ -51,8 +39,6 @@ export default function NintendoPage() {
       platform: "Nintendo Switch",
       genre: "RPG",
       releaseDate: "Nov 2022",
-    },
-    {
       title: "Metroid Dread",
       rating: 9.2,
       category: "Action",
@@ -66,40 +52,23 @@ export default function NintendoPage() {
       platform: "Nintendo Switch",
       genre: "Action",
       releaseDate: "Oct 2021",
-    },
   ]
 
   const upcomingNintendoGames = [
-    { name: "Mario vs. Donkey Kong", releaseDate: "Feb 16, 2024", platform: "Switch" },
-    { name: "Princess Peach: Showtime!", releaseDate: "Mar 22, 2024", platform: "Switch" },
-    { name: "Luigi's Mansion 2 HD", releaseDate: "Summer 2024", platform: "Switch" },
-    { name: "Paper Mario: TTYD Remake", releaseDate: "2024", platform: "Switch" },
   ]
 
-  const getRatingColor = (rating: number) => {
     if (rating >= 9) return "text-green-400 bg-green-500/20 border-green-500/30"
     if (rating >= 8) return "text-blue-400 bg-blue-500/20 border-blue-500/30"
     if (rating >= 7) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30"
     if (rating >= 6) return "text-orange-400 bg-orange-500/20 border-orange-500/30"
     return "text-red-400 bg-red-500/20 border-red-500/30"
-  }
 
-  const getRatingBadge = (rating: number) => {
-    if (rating >= 9) return { text: "Masterpiece", color: "bg-green-600" }
-    if (rating >= 8) return { text: "Excellent", color: "bg-blue-600" }
-    if (rating >= 7) return { text: "Good", color: "bg-yellow-600" }
-    if (rating >= 6) return { text: "Fair", color: "bg-orange-600" }
-    return { text: "Poor", color: "bg-red-600" }
-  }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Banner Carousel */}
       <div className="px-4 sm:px-6 lg:px-8 py-8">
-        <BannerCarousel />
       </div>
       
-      {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-slate-900 via-red-900 to-pink-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/nintendo-pattern.png')] opacity-10"></div>
         <div className="absolute inset-0">
@@ -110,12 +79,9 @@ export default function NintendoPage() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <Gamepad2 className="w-10 h-10 mr-4 text-red-400" />
                 <span className="text-red-300 font-semibold tracking-wide text-lg">NINTENDO GAMING</span>
-                <Gamepad2 className="w-10 h-10 ml-4 text-red-400" />
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 lg:mb-8">
-                Nintendo{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-pink-400 to-purple-400">
                   Gaming
                 </span>
@@ -157,104 +123,71 @@ export default function NintendoPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {nintendoGames.map((game, index) => (
-                  <Link key={index} href={`/gaming/nintendo/${index + 1}`} className="group">
                     <Card className="bg-white hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] border border-gray-200 hover:border-red-300 overflow-hidden">
                       <div className="relative">
                         <img
-                          src={game.image}
-                          alt={game.title}
                           className="w-full h-48 object-cover"
-                        />
                         <div className="absolute top-3 left-3 flex gap-2">
                           <Badge className="bg-red-600 text-white font-medium">
-                            {game.category}
                           </Badge>
                           <Badge className="bg-pink-600 text-white font-medium">
-                            {game.platform}
                           </Badge>
                         </div>
                         <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm">
-                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          <span className="font-medium">{game.rating}</span>
                         </div>
                         <div className="absolute bottom-3 left-3">
-                          <Badge className={`${getRatingBadge(game.rating).color} text-white font-bold px-3 py-1`}>
-                            {getRatingBadge(game.rating).text}
                           </Badge>
                         </div>
                       </div>
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-3">
-                          <Badge className="bg-gray-100 text-gray-800 font-semibold">{game.genre}</Badge>
-                          <span className="text-sm text-gray-500">{game.date}</span>
                         </div>
                         <CardTitle className="text-lg mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
-                          {game.title}
                         </CardTitle>
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{game.excerpt}</p>
                         <div className="flex items-center justify-between text-xs text-gray-500">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
-                              <Users className="w-3 h-3" />
-                              <span>{game.author}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{game.readTime}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1">
-                              <ThumbsUp className="w-3 h-3" />
-                              <span>{game.likes}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <MessageCircle className="w-3 h-3" />
-                              <span>{game.comments}</span>
                             </div>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
                   </Link>
-                ))}
               </div>
             </div>
 
             <div className="xl:col-span-1">
               <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-6 lg:p-8 border border-red-200 sticky top-8">
                 <div className="flex items-center mb-6">
-                  <BarChart3 className="w-6 h-6 mr-3 text-red-600" />
                   <h3 className="text-xl font-bold text-gray-900">Upcoming Games</h3>
                 </div>
 
                 <div className="space-y-4">
-                  {upcomingNintendoGames.map((game, index) => (
                     <div
-                      key={index}
                       className="flex items-center justify-between p-4 bg-white rounded-xl border border-red-100 hover:border-red-200 transition-colors"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                          {index + 1}
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-900 text-sm">{game.name}</div>
-                          <div className="text-xs text-gray-500">{game.platform}</div>
                         </div>
                       </div>
                       <div className="text-xs text-red-600 font-medium">
-                        {game.releaseDate}
                       </div>
                     </div>
-                  ))}
                 </div>
 
                 <div className="mt-8 p-4 bg-white rounded-xl border border-red-100">
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="font-semibold text-gray-900">Nintendo Stats</h4>
-                    <TrendingUp className="w-5 h-5 text-green-500" />
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
@@ -277,7 +210,5 @@ export default function NintendoPage() {
         </div>
       </div>
 
-      <Footer />
     </div>
   )
-}

@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { SearchModal } from "@/components/search-modal"
 import DarkModeToggle from "@/components/dark-mode-toggle"
 import { motion, AnimatePresence } from "framer-motion"
+import { SignInButton, SignUpButton } from "@clerk/nextjs"
 import {
   Home,
   Star,
@@ -38,6 +39,7 @@ import {
   Menu,
   X,
   ArrowLeft,
+
 } from "lucide-react"
 
 interface MenuItem {
@@ -123,6 +125,50 @@ export function AnimatedSidebar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [dynamicMenuStructure, setDynamicMenuStructure] = useState<MenuItem[]>(menuStructure)
+
+
+  useEffect(() => {
+    // Fetch menu structure from admin API
+    const fetchMenuStructure = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/menu?location=navbar`)
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.data) {
+            // Transform API data to match frontend structure
+            const transformedMenu = data.data.map((item: any) => ({
+              name: item.name,
+              href: item.href,
+              icon: getIconComponent(item.icon),
+              subItems: item.children?.map((child: any) => ({
+                name: child.name,
+                href: child.href,
+                icon: getIconComponent(child.icon)
+              }))
+            }))
+            setDynamicMenuStructure(transformedMenu)
+          }
+        }
+      } catch (error) {
+        console.log('Using default menu structure')
+      }
+    }
+
+    fetchMenuStructure()
+  }, [])
+
+
+
+  const getIconComponent = (iconName?: string) => {
+    const iconMap: { [key: string]: any } = {
+      Home, Star, BookOpen, Gamepad2, Monitor, Search, User, MessageSquare,
+      List, Phone, Share2, ChevronRight, Newspaper, Video, Lightbulb,
+      MessageCircle, HelpCircle, Globe, Tv, Palette, Atom, Rss, Mail,
+      Info, FileText, Shield, Cookie, Briefcase, Menu, X, ArrowLeft
+    }
+    return iconMap[iconName || 'Home'] || Home
+  }
 
   const openSubmenuPage = (menuName: string) => {
     setCurrentPage(menuName)
@@ -151,12 +197,10 @@ export function AnimatedSidebar() {
     initial: {
       x: "100%",
       rotateY: -90,
-      transformOrigin: "left center",
     },
     animate: {
       x: 0,
       rotateY: 0,
-      transformOrigin: "left center",
       transition: {
         duration: 0.6,
         ease: "easeInOut",
@@ -165,7 +209,6 @@ export function AnimatedSidebar() {
     exit: {
       x: "100%",
       rotateY: -90,
-      transformOrigin: "left center",
       transition: {
         duration: 0.6,
         ease: "easeInOut",
@@ -181,7 +224,6 @@ export function AnimatedSidebar() {
     exit: {
       x: "-100%",
       rotateY: 90,
-      transformOrigin: "right center",
       transition: {
         duration: 0.6,
         ease: "easeInOut",
@@ -190,7 +232,6 @@ export function AnimatedSidebar() {
     animate: {
       x: 0,
       rotateY: 0,
-      transformOrigin: "right center",
       transition: {
         duration: 0.6,
         ease: "easeInOut",
@@ -199,7 +240,7 @@ export function AnimatedSidebar() {
   }
 
   const SubmenuPage = ({ menuName }: { menuName: string }) => {
-    const menuItem = menuStructure.find((item) => item.name === menuName)
+    const menuItem = dynamicMenuStructure.find((item) => item.name === menuName)
     if (!menuItem || !menuItem.subItems) return null
 
     return (
@@ -209,61 +250,79 @@ export function AnimatedSidebar() {
         animate="animate"
         exit="exit"
         className="absolute inset-0 bg-black flex flex-col"
-        style={{ perspective: "1000px" }}
+
       >
-        <div className="p-4 border-b border-gray-800">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
-                <span className="text-black font-bold text-sm">K</span>
-              </div>
-              <h1 className="text-white font-bold text-lg">KOODOS</h1>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden text-white hover:bg-gray-800"
-              onClick={closeMobileMenu}
+        <div className="flex flex-col h-full overflow-hidden">
+          <div className="p-6 flex-shrink-0">
+            <button
+              onClick={goBackToMainMenu}
+              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-sidebar-accent/30"
             >
-              <X className="w-5 h-5" />
-            </Button>
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm font-medium">Back to Menu</span>
+            </button>
           </div>
 
-          <button
-            onClick={goBackToMainMenu}
-            className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back to Menu</span>
-          </button>
-        </div>
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-sidebar-accent/50 rounded-lg">
+                <menuItem.icon className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-white font-semibold text-lg">{menuItem.name}</h2>
+            </div>
 
-        <div className="p-4 flex-1">
-          <div className="flex items-center space-x-3 mb-6">
-            <menuItem.icon className="w-6 h-6 text-white" />
-            <h2 className="text-white font-semibold text-lg">{menuItem.name}</h2>
-          </div>
+            <nav className="space-y-1 mb-8">
+              {menuItem.subItems.map((subItem) => (
+                <Link
+                  key={subItem.name}
+                  href={subItem.href}
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-sidebar-accent/50 rounded-xl transition-all duration-200 group"
+                  onClick={handleLinkClick}
+                >
+                  <div className="p-1.5 bg-sidebar-accent/30 rounded-lg group-hover:bg-sidebar-accent/50 transition-colors">
+                    <subItem.icon className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-medium">{subItem.name}</span>
+                </Link>
+              ))}
+            </nav>
+            
+              </div>
 
-          <nav className="space-y-2">
-            {menuItem.subItems.map((subItem) => (
-              <Link
-                key={subItem.name}
-                href={subItem.href}
-                className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-900 rounded-lg transition-colors"
-                onClick={handleLinkClick}
-              >
-                <subItem.icon className="w-5 h-5" />
-                <span className="text-sm font-medium">{subItem.name}</span>
-              </Link>
-            ))}
-          </nav>
+              {/* User Profile Section - Fixed at Bottom */}
+              <div className="px-6 pb-6 flex-shrink-0">
+                <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-white text-sm font-semibold">Join KOODOS</h3>
+                      <p className="text-gray-400 text-xs">Gaming community</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <SignInButton mode="modal">
+                      <button className="flex-1 bg-white text-black hover:bg-gray-100 text-xs py-2.5 rounded-lg font-medium transition-colors">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="flex-1 bg-transparent border border-gray-600 text-white hover:bg-gray-800 text-xs py-2.5 rounded-lg font-medium transition-colors">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
+                  </div>
+                </div>
+              </div>
         </div>
       </motion.div>
     )
   }
 
   const SidebarContent = () => (
-    <div className="relative h-full overflow-hidden" style={{ perspective: "1000px" }}>
+    <div className="relative h-full overflow-hidden" suppressHydrationWarning>
       <AnimatePresence mode="wait">
         {!currentPage ? (
           <motion.div
@@ -274,100 +333,81 @@ export function AnimatedSidebar() {
             exit="exit"
             className="absolute inset-0 flex flex-col"
           >
-            <div className="p-6 flex-1 overflow-y-auto">
-              {/* Modern Gaming Header */}
-                          <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <div className="w-12 h-12 gaming-gradient rounded-xl flex items-center justify-center neon-glow">
-                    <span className="text-white font-black text-xl gaming-title">K</span>
-                  </div>
-                  <div className="absolute -inset-1 gaming-gradient rounded-xl opacity-20 blur-sm"></div>
-                </div>
-                <div>
-                  <h1 className="text-white font-black text-xl gaming-title">KOODOS</h1>
-                  <p className="text-gaming-cyan text-xs font-semibold">Gaming Hub</p>
-                </div>
-              </div>
-                <div className="flex items-center gap-2">
-                  <DarkModeToggle />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="lg:hidden text-white hover:bg-sidebar-accent rounded-lg"
-                    onClick={closeMobileMenu}
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
+            <div className="flex flex-col h-full overflow-hidden">
 
-              <nav className="space-y-2">
-                {menuStructure.map((item) => (
-                  <div key={item.name}>
-                    {item.subItems &&
-                    ["Reviews", "Gaming", "Anime & Manga", "Follow Koodos", "More"].includes(item.name) ? (
-                      <button
-                        onClick={() => openSubmenuPage(item.name)}
-                        className="w-full flex items-center justify-between px-4 py-3 text-white hover:bg-sidebar-accent rounded-xl transition-all duration-200 text-sm gaming-subtitle group"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="p-1.5 bg-sidebar-accent rounded-lg group-hover:bg-sidebar-primary transition-colors">
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto px-6 pt-6 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                {/* Search Integration */}
+                <div className="relative mb-6">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search on KOODOS"
+                    className="w-full pl-10 pr-4 py-3 bg-sidebar-accent/30 border border-sidebar-border/30 rounded-xl text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gaming-cyan focus:border-gaming-cyan transition-all duration-200"
+                    onClick={() => setIsSearchOpen(true)}
+                  />
+                </div>
+
+                {/* Navigation */}
+                <nav className="space-y-1">
+                  {dynamicMenuStructure.map((item) => (
+                    <div key={item.name}>
+                      {item.subItems &&
+                      ["Reviews", "Gaming", "Anime & Manga", "Follow Koodos", "More"].includes(item.name) ? (
+                        <button
+                          onClick={() => openSubmenuPage(item.name)}
+                          className="w-full flex items-center justify-between px-4 py-3 text-gray-300 hover:text-white hover:bg-sidebar-accent/50 rounded-xl text-sm font-medium group transition-all duration-200"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 bg-sidebar-accent/30 rounded-lg group-hover:bg-sidebar-accent/50 transition-colors flex items-center justify-center min-w-[32px] min-h-[32px]">
+                              <item.icon className="w-4 h-4" />
+                            </div>
+                            <span>{item.name}</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        </button>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-sidebar-accent/50 rounded-xl text-sm font-medium group transition-all duration-200"
+                          onClick={handleLinkClick}
+                        >
+                          <div className="p-1.5 bg-sidebar-accent/30 rounded-lg group-hover:bg-sidebar-accent/50 transition-colors">
                             <item.icon className="w-4 h-4" />
                           </div>
                           <span>{item.name}</span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:bg-sidebar-accent rounded-xl transition-all duration-200 text-sm gaming-subtitle group"
-                        onClick={handleLinkClick}
-                      >
-                        <div className="p-1.5 bg-sidebar-accent rounded-lg group-hover:bg-sidebar-primary transition-colors">
-                          <item.icon className="w-4 h-4" />
-                        </div>
-                        <span>{item.name}</span>
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </nav>
-            </div>
-
-            <div className="p-6 border-t border-sidebar-border">
-              <div className="space-y-3 mb-6">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-white hover:text-white hover:bg-sidebar-accent rounded-xl text-sm gaming-subtitle group"
-                  onClick={() => setIsSearchOpen(true)}
-                >
-                  <div className="p-1.5 bg-sidebar-accent rounded-lg group-hover:bg-sidebar-primary transition-colors mr-3">
-                    <Search className="w-4 h-4" />
-                  </div>
-                  Search on KOODOS
-                </Button>
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </nav>
               </div>
 
-              <div className="bg-sidebar-accent rounded-xl p-4 border border-sidebar-border">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 gaming-gradient rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
+              {/* Fixed User Profile Section */}
+              <div className="px-6 pb-6 flex-shrink-0">
+                <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-white text-sm font-semibold">Join KOODOS</h3>
+                      <p className="text-gray-400 text-xs">Gaming community</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-white text-sm font-semibold gaming-subtitle">Join KOODOS</p>
-                    <p className="text-gaming-cyan text-xs font-medium">Pro Gamer</p>
+                  <div className="flex gap-2">
+                    <SignInButton mode="modal">
+                      <button className="flex-1 bg-white text-black hover:bg-gray-100 text-xs py-2.5 rounded-lg font-medium transition-colors">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <button className="flex-1 bg-transparent border border-gray-600 text-white hover:bg-gray-800 text-xs py-2.5 rounded-lg font-medium transition-colors">
+                        Sign Up
+                      </button>
+                    </SignUpButton>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Button className="w-full gaming-button text-xs py-2">Sign In</Button>
-                  <Button
-                    variant="outline"
-                    className="w-full border-sidebar-border text-white hover:bg-sidebar-primary hover:text-white text-xs py-2 bg-transparent rounded-xl"
-                  >
-                    Sign Up
-                  </Button>
                 </div>
               </div>
             </div>
@@ -390,7 +430,7 @@ export function AnimatedSidebar() {
         <Menu className="w-5 h-5" />
       </Button>
 
-      <div className="fixed left-0 top-0 h-full w-64 bg-black border-r border-gray-800 z-40 flex flex-col hidden lg:flex">
+      <div className="sidebar-container fixed left-0 top-0 h-full w-72 bg-black border-r border-gray-700 z-40 flex flex-col hidden lg:flex">
         <SidebarContent />
       </div>
 
@@ -410,7 +450,7 @@ export function AnimatedSidebar() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="fixed left-0 top-0 h-full w-[85vw] max-w-80 bg-black border-r border-gray-800 z-50 flex flex-col lg:hidden shadow-2xl"
+              className="fixed left-0 top-0 h-full w-[85vw] max-w-80 bg-black border-r border-gray-700 z-50 flex flex-col lg:hidden shadow-2xl"
             >
               <SidebarContent />
             </motion.div>
