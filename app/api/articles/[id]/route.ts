@@ -3,11 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/auth"
 
 /*
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function GET(request: NextRequest, { params: { id } }: { params: { id: string } }) {
   try {
     const article = await prisma.article.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         author: {
           select: { id: true, name: true, avatar: true },
@@ -27,7 +26,7 @@ export async function GET(request: NextRequest, context: { params: { id: string 
 
     // Increment view count
     await prisma.article.update({
-      where: { id: params.id },
+      where: { id },
       data: { views: { increment: 1 } },
     })
 
@@ -39,8 +38,7 @@ export async function GET(request: NextRequest, context: { params: { id: string 
 }
 */
 
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function PUT(request: NextRequest, { params: { id } }: { params: { id: string } }) {
   try {
     const user = await requireAuth()
     const body = await request.json()
@@ -49,7 +47,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
 
     // Check if user owns the article or has admin/editor role
     const existingArticle = await prisma.article.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingArticle) {
@@ -61,7 +59,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     }
 
     const article = await prisma.article.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         content,
@@ -97,14 +95,13 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
   }
 }
 
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
-  const { params } = context;
+export async function DELETE(request: NextRequest, { params: { id } }: { params: { id: string } }) {
   try {
     const user = await requireAuth()
 
     // Check if user owns the article or has admin role
     const existingArticle = await prisma.article.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingArticle) {
@@ -116,7 +113,7 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     }
 
     await prisma.article.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Article deleted successfully" })
