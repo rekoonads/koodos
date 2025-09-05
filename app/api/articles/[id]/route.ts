@@ -65,9 +65,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         title,
         content,
         excerpt,
-        published,
-        featured,
-        publishedAt: published && !existingArticle.published ? new Date() : existingArticle.publishedAt,
+        ...(published !== undefined && { published }),
+        ...(featured !== undefined && { featured }),
+        ...(published && !existingArticle.published && { publishedAt: new Date() }),
         categoryId,
         tags: {
           set: [],
