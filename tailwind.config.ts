@@ -79,12 +79,16 @@ const config: Config = {
         "5": "hsl(var(--chart-5))",
       },
     },
+    borderColor: {
+      DEFAULT: "hsl(var(--border))",
     },
-      borderColor: {
-        DEFAULT: "hsl(var(--border))",
-      },
-      borderRadius: {
-    keyframes: {
+    borderRadius: {
+      lg: "var(--radius)",
+      md: "calc(var(--radius) - 2px)",
+      sm: "calc(var(--radius) - 4px)",
+    },
+    extend: {
+      keyframes: {
       "accordion-down": {
         from: { height: "0" },
         to: { height: "var(--radix-accordion-content-height)" },
@@ -121,6 +125,7 @@ const config: Config = {
       "fade-in-up": "fade-in-up 0.8s ease-out",
       "slide-in-left": "slide-in-left 0.6s ease-out",
       "neon-pulse": "neon-pulse 2s ease-in-out infinite",
+    },
     },
   },
   plugins: [require("tailwindcss-animate")],

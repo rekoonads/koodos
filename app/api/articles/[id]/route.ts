@@ -38,7 +38,8 @@ export async function GET(request: NextRequest, { params: { id } }: { params: { 
 }
 */
 
-export async function PUT(request: NextRequest, { params: { id } }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
     const user = await requireAuth()
     const body = await request.json()
@@ -95,7 +96,8 @@ export async function PUT(request: NextRequest, { params: { id } }: { params: { 
   }
 }
 
-export async function DELETE(request: NextRequest, { params: { id } }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
     const user = await requireAuth()
 
