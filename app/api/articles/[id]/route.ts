@@ -44,7 +44,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const user = await requireAuth()
     const body = await request.json()
 
-    const { title, content, excerpt, featuredImage, imageAlt, categoryId, tagIds, published, featured } = body
+    const { title, content, excerpt, categoryId, tagIds, published, featured } = body
 
     // Check if user owns the article or has admin/editor role
     const existingArticle = await prisma.article.findUnique({
@@ -65,8 +65,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         title,
         content,
         excerpt,
-        featuredImage,
-        imageAlt,
         published,
         featured,
         publishedAt: published && !existingArticle.published ? new Date() : existingArticle.publishedAt,
