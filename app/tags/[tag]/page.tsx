@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { User, Clock, Eye, Tag } from 'lucide-react'
 
 type Props = {
-  params: { tag: string }
+  params: Promise<{ tag: string }>
 }
 
 // Mock function to get articles by tag
@@ -70,8 +70,9 @@ async function getArticlesByTag(tag: string) {
 }
 
 export default async function TagPage({ params }: Props) {
-  const articles = await getArticlesByTag(params.tag)
-  const tagName = decodeURIComponent(params.tag).replace(/-/g, " ")
+  const { tag } = await params
+  const articles = await getArticlesByTag(tag)
+  const tagName = decodeURIComponent(tag).replace(/-/g, " ")
 
   return (
     <div className="min-h-screen bg-black">

@@ -4,10 +4,10 @@ import { CloudinaryImage } from '@/components/cloudinary-image'
 import { Clock, Eye, Calendar } from 'lucide-react'
 
 interface ArticlePageProps {
-  params: {
+  params: Promise<{
     category: string
     slug: string
-  }
+  }>
 }
 
 // Mock article data for fallback
@@ -36,8 +36,9 @@ const getMockArticle = (slug: string) => {
   }
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const article = getMockArticle(params.slug)
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const { slug } = await params
+  const article = getMockArticle(slug)
 
   return (
     <div className="min-h-screen bg-black text-white">

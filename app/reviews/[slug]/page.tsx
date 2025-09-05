@@ -6,9 +6,9 @@ import { Star } from "lucide-react"
 import Image from "next/image"
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 async function getReview(slug: string) {
@@ -72,7 +72,8 @@ async function getReview(slug: string) {
 }
 
 export default async function ReviewPage({ params }: PageProps) {
-  const review = await getReview(params.slug)
+  const { slug } = await params
+  const review = await getReview(slug)
 
   return (
     <div className="min-h-screen bg-background">

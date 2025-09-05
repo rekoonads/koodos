@@ -6,7 +6,7 @@ import { Clock, Calendar, User } from 'lucide-react'
 import { Metadata } from 'next'
 
 type Props = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 async function getArticle(slug: string) {
@@ -38,7 +38,8 @@ async function getRelatedArticles(categorySlug: string, currentSlug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await getArticle(params.slug)
+  const { slug } = await params
+  const article = await getArticle(slug)
 
   if (!article) {
     return {
@@ -69,8 +70,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ArticlePage({ params }: Props) {
-  const article = await getArticle(params.slug)
-  const relatedArticles = await getRelatedArticles(article.category?.slug || '', params.slug)
+  const { slug } = await params
+  const article = await getArticle(slug)
+  const relatedArticles = await getRelatedArticles(article.category?.slug || '', slug)
 
   // Calculate read time (rough estimate: 200 words per minute)
   const wordCount = article.content?.split(/\s+/).length || 0
