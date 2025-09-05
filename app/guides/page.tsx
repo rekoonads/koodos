@@ -1,11 +1,59 @@
+import React from 'react'
+import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ChevronRight, Eye, Star, User, Clock } from 'lucide-react'
 
-  // Guides will be fetched from API
+const GuidesPage = () => {
+  const guides = [
+    {
+      id: 1,
+      title: "The Ultimate Guide to Starting a Gaming Channel",
+      category: { slug: 'guides', name: 'Content Creation' },
+      slug: 'gaming-channel-guide',
+      featuredImage: '/public/placeholder.jpg',
+      isFeatured: true,
+      viewsCount: 1500,
+      type: 'Beginner',
+      excerpt: 'Everything you need to know to start and grow a successful gaming channel on YouTube or Twitch.',
+      author: 'John Doe',
+    },
+    {
+      id: 2,
+      title: "Mastering Advanced Combat in Elden Ring",
+      category: { slug: 'guides', name: 'Game Guide' },
+      slug: 'elden-ring-combat-guide',
+      featuredImage: '/public/placeholder.jpg',
+      isFeatured: false,
+      viewsCount: 2500,
+      type: 'Advanced',
+      excerpt: 'Learn advanced combat techniques, parrying, and strategies to defeat the toughest bosses in Elden Ring.',
+      author: 'Jane Smith',
+    },
+    {
+      id: 3,
+      title: "Building Your First Gaming PC: A Step-by-Step Guide",
+      category: { slug: 'guides', name: 'Hardware' },
+      slug: 'building-gaming-pc-guide',
+      featuredImage: '/public/placeholder.jpg',
+      isFeatured: true,
+      viewsCount: 3500,
+      type: 'Intermediate',
+      excerpt: 'A comprehensive guide to selecting components and building your own gaming PC from scratch.',
+      author: 'Peter Jones',
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-background">
       <div className="px-4 sm:px-6 lg:px-8 py-8">
       </div>
-      
+
       <div className="relative bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/guide-pattern.png')] opacity-10"></div>
         <div className="absolute inset-0">
@@ -120,3 +168,6 @@
 
     </div>
   )
+}
+
+export default GuidesPage

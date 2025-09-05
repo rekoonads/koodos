@@ -1,5 +1,16 @@
+import React from 'react'
+import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardTitle,
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Star, Heart, MessageSquare, User, Clock, Eye } from 'lucide-react'
 
+const XboxPage = () => {
   const xboxGames = [
+    {
       title: "Halo Infinite",
       rating: 8.7,
       category: "FPS",
@@ -13,6 +24,8 @@
       platform: "Xbox Series X|S",
       genre: "FPS",
       releaseDate: "Dec 2021",
+    },
+    {
       title: "Forza Motorsport",
       rating: 9.1,
       category: "Racing",
@@ -26,6 +39,8 @@
       platform: "Xbox Series X|S",
       genre: "Racing",
       releaseDate: "Oct 2023",
+    },
+    {
       title: "Starfield",
       rating: 7.9,
       category: "RPG",
@@ -39,6 +54,8 @@
       platform: "Xbox Series X|S",
       genre: "RPG",
       releaseDate: "Sep 2023",
+    },
+    {
       title: "Gears 5",
       rating: 8.5,
       category: "Action",
@@ -52,23 +69,37 @@
       platform: "Xbox Series X|S",
       genre: "Action",
       releaseDate: "Sep 2019",
+    },
   ]
 
   const gamePassGames = [
+    {
+      title: "Diablo IV",
+      category: "RPG",
+    },
+    {
+      title: "Sea of Thieves",
+      category: "Adventure",
+    },
+    {
+      title: "Minecraft",
+      category: "Sandbox",
+    },
   ]
 
+  const getRatingColor = (rating: number) => {
     if (rating >= 9) return "text-green-400 bg-green-500/20 border-green-500/30"
     if (rating >= 8) return "text-blue-400 bg-blue-500/20 border-blue-500/30"
     if (rating >= 7) return "text-yellow-400 bg-yellow-500/20 border-yellow-500/30"
     if (rating >= 6) return "text-orange-400 bg-orange-500/20 border-orange-500/30"
     return "text-red-400 bg-red-500/20 border-red-500/30"
-
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="px-4 sm:px-6 lg:px-8 py-8">
       </div>
-      
+
       <div className="relative bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/xbox-pattern.png')] opacity-10"></div>
         <div className="absolute inset-0">
@@ -123,44 +154,66 @@
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {xboxGames.map((game, index) => (
+                  <Link href="#" key={index}>
                     <Card className="bg-white hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] border border-gray-200 hover:border-green-300 overflow-hidden">
                       <div className="relative">
                         <img
+                          src={game.image}
+                          alt={game.title}
                           className="w-full h-48 object-cover"
+                        />
                         <div className="absolute top-3 left-3 flex gap-2">
                           <Badge className="bg-green-600 text-white font-medium">
+                            {game.platform}
                           </Badge>
                           <Badge className="bg-emerald-600 text-white font-medium">
+                            {game.genre}
                           </Badge>
                         </div>
                         <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm">
+                          <Star className="w-3 h-3" />
+                          {game.rating}
                         </div>
                         <div className="absolute bottom-3 left-3">
+                          <Badge className={getRatingColor(game.rating)}>
+                            {game.rating}
                           </Badge>
                         </div>
                       </div>
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-3">
+                          <p className="text-sm text-gray-500">{game.releaseDate}</p>
                         </div>
                         <CardTitle className="text-lg mb-3 group-hover:text-green-600 transition-colors line-clamp-2">
+                          {game.title}
                         </CardTitle>
                         <div className="flex items-center justify-between text-xs text-gray-500">
                           <div className="flex items-center gap-3">
                             <div className="flex items-center gap-1">
+                              <User className="w-3 h-3" />
+                              {game.author}
                             </div>
                             <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {game.readTime}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1">
+                              <Heart className="w-3 h-3" />
+                              {game.likes}
                             </div>
                             <div className="flex items-center gap-1">
+                              <MessageSquare className="w-3 h-3" />
+                              {game.comments}
                             </div>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
                   </Link>
+                ))}
               </div>
             </div>
 
@@ -171,18 +224,24 @@
                 </div>
 
                 <div className="space-y-4">
+                  {gamePassGames.map((game, index) => (
                     <div
+                      key={index}
                       className="flex items-center justify-between p-4 bg-white rounded-xl border border-green-100 hover:border-green-200 transition-colors"
                     >
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                          {index + 1}
                         </div>
                         <div>
+                          <p className="font-semibold text-gray-900">{game.title}</p>
                         </div>
                       </div>
                       <div className="text-xs text-green-600 font-medium">
+                        {game.category}
                       </div>
                     </div>
+                  ))}
                 </div>
 
                 <div className="mt-8 p-4 bg-white rounded-xl border border-green-100">
@@ -212,3 +271,6 @@
 
     </div>
   )
+}
+
+export default XboxPage

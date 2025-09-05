@@ -1,7 +1,17 @@
+import React from 'react'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
+const ContactPage = () => {
   return (
     <div className="min-h-screen bg-black">
-
       <main className="ml-64 bg-gray-50 min-h-screen">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-12 px-6">
           <div className="max-w-4xl mx-auto text-center">
@@ -22,22 +32,27 @@
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <Input placeholder="John" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                    <Input placeholder="Doe" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <Input type="email" placeholder="john.doe@example.com" />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                  <Input placeholder="Regarding..." />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                  <Textarea placeholder="Your message..." />
                 </div>
 
                 <Button className="w-full bg-blue-600 hover:bg-blue-700">
@@ -117,7 +132,9 @@
             </div>
           </div>
         </div>
-
       </main>
     </div>
   )
+}
+
+export default ContactPage

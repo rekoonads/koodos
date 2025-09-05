@@ -1,7 +1,8 @@
+import React from 'react'
 
+const PrivacyPage = () => {
   return (
     <div className="min-h-screen bg-black">
-
       <main className="ml-64 bg-gray-50 min-h-screen">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
@@ -61,3 +62,6 @@
       </main>
     </div>
   )
+}
+
+export default PrivacyPage

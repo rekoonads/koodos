@@ -1,4 +1,6 @@
+import React from 'react'
 
+const FollowPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="ml-64">
@@ -67,3 +69,6 @@
       </div>
     </div>
   )
+}
+
+export default FollowPage

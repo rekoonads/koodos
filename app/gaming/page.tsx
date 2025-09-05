@@ -1,120 +1,152 @@
+import React from 'react'
+import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardTitle,
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Star, Heart, MessageSquare, User, Clock, Eye, ChevronRight, Gamepad2, TrendingUp } from 'lucide-react'
 
-const featuredGames = [
-    id: 1,
-    title: "Cyberpunk 2077: Phantom Liberty",
-    description:
-      "The ultimate expansion that redefines Night City with new characters, storylines, and gameplay mechanics.",
-    rating: 4.8,
-    platform: "PC, PS5, Xbox",
-    genre: "RPG",
-    releaseDate: "Sep 2023",
-    image: "/cyberpunk-phantom-liberty.png",
-    price: "$29.99",
-    discount: "20% OFF",
-    views: "125K",
-    likes: 3420,
-    comments: 892,
-    author: "Alex Chen",
-    readTime: "12 min read",
-    category: "Game Review",
-    id: 2,
-    title: "Spider-Man 2 PS5",
-    description: "Web-slinging perfection with dual protagonists and enhanced combat mechanics that set new standards.",
-    rating: 4.9,
-    platform: "PS5 Exclusive",
-    genre: "Action-Adventure",
-    releaseDate: "Oct 2023",
-    image: "/spider-man-2-ps5.png",
-    price: "$69.99",
-    discount: "New Release",
-    views: "89K",
-    likes: 2156,
-    comments: 445,
-    author: "Sarah Johnson",
-    readTime: "15 min read",
-    category: "Game Review",
-    id: 3,
-    title: "Baldur's Gate 3",
-    description: "The definitive RPG experience with unparalleled choice and consequence that redefines modern RPGs.",
-    rating: 4.9,
-    platform: "PC, PS5, Xbox",
-    genre: "RPG",
-    releaseDate: "Aug 2023",
-    image: "/baldurs-gate-3-rpg.png",
-    price: "$59.99",
-    discount: "GOTY Edition",
-    views: "156K",
-    likes: 4521,
-    comments: 1203,
-    author: "Emma Wilson",
-    readTime: "20 min read",
-    category: "Game Review",
-    id: 4,
-    title: "Alan Wake 2",
-    description: "A masterpiece of psychological horror that blends reality and nightmare in unprecedented ways.",
-    rating: 4.7,
-    platform: "PC, PS5, Xbox",
-    genre: "Horror",
-    releaseDate: "Oct 2023",
-    image: "/alan-wake-2-horror.png",
-    price: "$49.99",
-    discount: "15% OFF",
-    views: "78K",
-    likes: 1892,
-    comments: 567,
-    author: "Mike Rodriguez",
-    readTime: "18 min read",
-    category: "Game Review",
-]
+const GamingPage = () => {
+  const featuredGames = [
+    {
+      id: 1,
+      title: "Cyberpunk 2077: Phantom Liberty",
+      description:
+        "The ultimate expansion that redefines Night City with new characters, storylines, and gameplay mechanics.",
+      rating: 4.8,
+      platform: "PC, PS5, Xbox",
+      genre: "RPG",
+      releaseDate: "Sep 2023",
+      image: "/cyberpunk-phantom-liberty.png",
+      price: "$29.99",
+      discount: "20% OFF",
+      views: "125K",
+      likes: 3420,
+      comments: 892,
+      author: "Alex Chen",
+      readTime: "12 min read",
+      category: "Game Review",
+    },
+    {
+      id: 2,
+      title: "Spider-Man 2 PS5",
+      description: "Web-slinging perfection with dual protagonists and enhanced combat mechanics that set new standards.",
+      rating: 4.9,
+      platform: "PS5 Exclusive",
+      genre: "Action-Adventure",
+      releaseDate: "Oct 2023",
+      image: "/spider-man-2-ps5.png",
+      price: "$69.99",
+      discount: "New Release",
+      views: "89K",
+      likes: 2156,
+      comments: 445,
+      author: "Sarah Johnson",
+      readTime: "15 min read",
+      category: "Game Review",
+    },
+    {
+      id: 3,
+      title: "Baldur's Gate 3",
+      description: "The definitive RPG experience with unparalleled choice and consequence that redefines modern RPGs.",
+      rating: 4.9,
+      platform: "PC, PS5, Xbox",
+      genre: "RPG",
+      releaseDate: "Aug 2023",
+      image: "/baldurs-gate-3-rpg.png",
+      price: "$59.99",
+      discount: "GOTY Edition",
+      views: "156K",
+      likes: 4521,
+      comments: 1203,
+      author: "Emma Wilson",
+      readTime: "20 min read",
+      category: "Game Review",
+    },
+    {
+      id: 4,
+      title: "Alan Wake 2",
+      description: "A masterpiece of psychological horror that blends reality and nightmare in unprecedented ways.",
+      rating: 4.7,
+      platform: "PC, PS5, Xbox",
+      genre: "Horror",
+      releaseDate: "Oct 2023",
+      image: "/alan-wake-2-horror.png",
+      price: "$49.99",
+      discount: "15% OFF",
+      views: "78K",
+      likes: 1892,
+      comments: 567,
+      author: "Mike Rodriguez",
+      readTime: "18 min read",
+      category: "Game Review",
+    },
+  ]
 
-const trendingNews = [
-    id: 1,
-    title: "PlayStation 5 Pro Officially Announced with 8K Gaming Support",
-    excerpt: "Sony reveals enhanced console specifications and launch lineup for holiday 2024.",
-    timeAgo: "2 hours ago",
-    views: "45K",
-    comments: 234,
-    category: "Hardware News",
-    id: 2,
-    title: "Xbox Game Pass Ultimate Gets Cloud Gaming Boost",
-    excerpt: "Microsoft announces major improvements to streaming quality and game library expansion.",
-    timeAgo: "4 hours ago",
-    views: "32K",
-    comments: 156,
-    category: "Service Update",
-    id: 3,
-    title: "Nintendo Direct February 2024: All Major Announcements",
-    excerpt: "New Mario game, Zelda DLC, and third-party surprises revealed in latest presentation.",
-    timeAgo: "1 day ago",
-    views: "89K",
-    comments: 567,
-    category: "Gaming News",
-]
+  const trendingNews = [
+    {
+      id: 1,
+      title: "PlayStation 5 Pro Officially Announced with 8K Gaming Support",
+      excerpt: "Sony reveals enhanced console specifications and launch lineup for holiday 2024.",
+      timeAgo: "2 hours ago",
+      views: "45K",
+      comments: 234,
+      category: "Hardware News",
+    },
+    {
+      id: 2,
+      title: "Xbox Game Pass Ultimate Gets Cloud Gaming Boost",
+      excerpt: "Microsoft announces major improvements to streaming quality and game library expansion.",
+      timeAgo: "4 hours ago",
+      views: "32K",
+      comments: 156,
+      category: "Service Update",
+    },
+    {
+      id: 3,
+      title: "Nintendo Direct February 2024: All Major Announcements",
+      excerpt: "New Mario game, Zelda DLC, and third-party surprises revealed in latest presentation.",
+      timeAgo: "1 day ago",
+      views: "89K",
+      comments: 567,
+      category: "Gaming News",
+    },
+  ]
 
-const upcomingReleases = [
-    title: "Final Fantasy VII Rebirth",
-    releaseDate: "Feb 29, 2024",
-    platform: "PS5 Exclusive",
-    preOrder: true,
-    title: "Skull and Bones",
-    releaseDate: "Feb 16, 2024",
-    platform: "Multi-platform",
-    preOrder: true,
-    title: "Granblue Fantasy Relink",
-    releaseDate: "Feb 1, 2024",
-    platform: "PC, PS5",
-    preOrder: false,
-    title: "Helldivers 2",
-    releaseDate: "Feb 8, 2024",
-    platform: "PC, PS5",
-    preOrder: true,
-]
+  const upcomingReleases = [
+    {
+      title: "Final Fantasy VII Rebirth",
+      releaseDate: "Feb 29, 2024",
+      platform: "PS5 Exclusive",
+      preOrder: true,
+    },
+    {
+      title: "Skull and Bones",
+      releaseDate: "Feb 16, 2024",
+      platform: "Multi-platform",
+      preOrder: true,
+    },
+    {
+      title: "Granblue Fantasy Relink",
+      releaseDate: "Feb 1, 2024",
+      platform: "PC, PS5",
+      preOrder: false,
+    },
+    {
+      title: "Helldivers 2",
+      releaseDate: "Feb 8, 2024",
+      platform: "PC, PS5",
+      preOrder: true,
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-background">
       <div className="px-4 sm:px-6 lg:px-8 py-8">
       </div>
-      
+
       <div className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-blue-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('/gaming-pattern.png')] opacity-10"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
@@ -195,53 +227,77 @@ const upcomingReleases = [
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold text-white">Featured Games</h2>
               <Link href="/reviews" className="text-purple-600 hover:text-purple-800 font-medium flex items-center">
+                View All <ChevronRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              {featuredGames.map((game) => (
+                <Link href="#" key={game.id}>
                   <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
                     <div className="relative">
                       <img
+                        src={game.image}
+                        alt={game.title}
                         className="w-full h-48 object-cover"
+                      />
                       <div className="absolute top-3 left-3">
                         <span className="bg-red-600 text-white text-xs px-2 py-1 rounded font-medium">
+                          {game.discount}
                         </span>
                       </div>
                       <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm">
+                        <Star className="w-3 h-3" />
+                        {game.rating}
                       </div>
                       <div className="absolute bottom-3 left-3 right-3 flex justify-between items-center">
                         <span className="bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                          {game.price}
                         </span>
                         <div className="flex items-center gap-2">
                           <span className="bg-green-600 text-white text-xs px-2 py-1 rounded font-medium">
+                            {game.platform}
                           </span>
                         </div>
                       </div>
                     </div>
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="secondary">{game.category}</Badge>
                       </div>
                       <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                        {game.title}
                       </h3>
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
                         <div className="flex items-center gap-1">
+                          <User className="w-3 h-3" />
+                          {game.author}
                         </div>
                         <div className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {game.readTime}
                         </div>
                       </div>
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" />
+                            {game.views}
                           </div>
                           <div className="flex items-center gap-1">
+                            <Heart className="w-3 h-3" />
+                            {game.likes}
                           </div>
                         </div>
                         <div className="flex items-center gap-1">
+                          <MessageSquare className="w-3 h-3" />
+                          {game.comments}
                         </div>
                       </div>
                     </div>
                   </div>
                 </Link>
+              ))}
             </div>
           </div>
 
@@ -249,27 +305,38 @@ const upcomingReleases = [
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-3xl lg:text-4xl font-bold text-white">Trending Gaming News</h2>
               <Link href="/latest-updates" className="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                View All <ChevronRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {trendingNews.map((news) => (
+                <Link href="#" key={news.id}>
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 hover:border-blue-300 p-6 rounded-xl transition-all duration-300 hover:shadow-lg group-hover:scale-[1.02]">
                     <div className="flex items-center justify-between mb-3">
                       <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium">
+                        {news.category}
                       </span>
+                      <span className="text-xs text-gray-500">{news.timeAgo}</span>
                     </div>
                     <h3 className="font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                      {news.title}
                     </h3>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
+                          <Eye className="w-3 h-3" />
+                          {news.views}
                         </div>
                         <div className="flex items-center gap-1">
+                          <MessageSquare className="w-3 h-3" />
+                          {news.comments}
                         </div>
                       </div>
                     </div>
                   </div>
                 </Link>
+              ))}
             </div>
           </div>
 
@@ -277,14 +344,22 @@ const upcomingReleases = [
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">Upcoming Releases</h2>
             <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 lg:p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                {upcomingReleases.map((release, index) => (
+                  <div key={index} className="bg-white p-4 rounded-xl shadow-sm">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded font-medium">
+                        {release.platform}
                       </span>
+                      {release.preOrder && (
                         <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">Pre-Order</span>
+                      )}
                     </div>
+                    <h3 className="font-semibold text-gray-900 mb-1">{release.title}</h3>
                     <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">{release.releaseDate}</span>
                     </div>
                   </div>
+                ))}
               </div>
             </div>
           </div>
@@ -300,6 +375,7 @@ const upcomingReleases = [
             <div className="group bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:border-green-300 p-6 lg:p-8 rounded-xl transition-all duration-300 hover:shadow-lg">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4">
+                  <Gamepad2 className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl lg:text-2xl font-bold text-green-800">Xbox Gaming</h3>
               </div>
@@ -308,6 +384,7 @@ const upcomingReleases = [
                 <div className="bg-white p-4 rounded-lg border border-green-200 hover:border-green-300 transition-colors group-hover:shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Halo Infinite Season Update</span>
+                    <TrendingUp className="w-5 h-5 text-green-600" />
                   </div>
                   <div className="text-sm text-gray-600 mt-1">New maps and weapons revealed</div>
                 </div>
@@ -315,6 +392,7 @@ const upcomingReleases = [
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Forza Motorsport Review</span>
                     <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500" />
                       <span className="text-sm ml-1">9.2</span>
                     </div>
                   </div>
@@ -323,6 +401,7 @@ const upcomingReleases = [
                 <div className="bg-white p-4 rounded-lg border border-green-200 hover:border-green-300 transition-colors group-hover:shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Game Pass February Additions</span>
+                    <span className="text-sm text-green-600">+15</span>
                   </div>
                   <div className="text-sm text-gray-600 mt-1">15 new games this month</div>
                 </div>
@@ -332,6 +411,7 @@ const upcomingReleases = [
             <div className="group bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 hover:border-blue-300 p-6 lg:p-8 rounded-xl transition-all duration-300 hover:shadow-lg">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                  <Gamepad2 className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl lg:text-2xl font-bold text-blue-800">PlayStation</h3>
               </div>
@@ -341,6 +421,7 @@ const upcomingReleases = [
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Spider-Man 2 Deep Dive</span>
                     <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500" />
                       <span className="text-sm ml-1">9.5</span>
                     </div>
                   </div>
@@ -349,12 +430,14 @@ const upcomingReleases = [
                 <div className="bg-white p-4 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors group-hover:shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">PS Plus Premium Games</span>
+                    <span className="text-sm text-blue-600">New</span>
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Monthly lineup revealed</div>
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-blue-200 hover:border-blue-300 transition-colors group-hover:shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">PSVR2 Game Reviews</span>
+                    <TrendingUp className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="text-sm text-gray-600 mt-1">VR gaming revolution</div>
                 </div>
@@ -364,6 +447,7 @@ const upcomingReleases = [
             <div className="group bg-gradient-to-br from-red-50 to-red-100 border border-red-200 hover:border-red-300 p-6 lg:p-8 rounded-xl transition-all duration-300 hover:shadow-lg md:col-span-2 xl:col-span-1">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mr-4">
+                  <Gamepad2 className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl lg:text-2xl font-bold text-red-800">Nintendo Switch</h3>
               </div>
@@ -372,6 +456,7 @@ const upcomingReleases = [
                 <div className="bg-white p-4 rounded-lg border border-red-200 hover:border-red-300 transition-colors group-hover:shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Tears of the Kingdom Guide</span>
+                    <span className="text-sm text-red-600">View</span>
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Complete walkthrough available</div>
                 </div>
@@ -379,6 +464,7 @@ const upcomingReleases = [
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Mario Wonder Review</span>
                     <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500" />
                       <span className="text-sm ml-1">9.8</span>
                     </div>
                   </div>
@@ -387,6 +473,7 @@ const upcomingReleases = [
                 <div className="bg-white p-4 rounded-lg border border-red-200 hover:border-red-300 transition-colors group-hover:shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">Switch Indie Spotlight</span>
+                    <TrendingUp className="w-5 h-5 text-red-600" />
                   </div>
                   <div className="text-sm text-gray-600 mt-1">Hidden gems discovered</div>
                 </div>
@@ -408,6 +495,7 @@ const upcomingReleases = [
                     <div className="flex items-center justify-between text-white">
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">GOTY 2024</span>
                       <div className="flex items-center">
+                        <Star className="w-4 h-4" />
                         <span className="text-sm">9.8</span>
                       </div>
                     </div>
@@ -437,6 +525,7 @@ const upcomingReleases = [
                     <div className="flex items-center justify-between text-white">
                       <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">Comparison</span>
                       <div className="flex items-center">
+                        <Eye className="w-4 h-4" />
                         <span className="text-sm">15K views</span>
                       </div>
                     </div>
@@ -465,3 +554,6 @@ const upcomingReleases = [
 
     </div>
   )
+}
+
+export default GamingPage

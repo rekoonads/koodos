@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/auth"
 
+/*
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const article = await prisma.article.findUnique({
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: "Failed to fetch article" }, { status: 500 })
   }
 }
+*/
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {

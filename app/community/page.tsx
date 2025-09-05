@@ -1,5 +1,17 @@
+import React from 'react'
+import {
+  Card,
+  CardContent,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { MessageSquare, Heart, Bookmark, Users, Edit, BarChart2, Star } from 'lucide-react'
 
+const CommunityPage = () => {
   const communityPosts = [
+    {
       title: "What's your Game of the Year 2024?",
       author: "GameMaster_Pro",
       replies: 47,
@@ -11,6 +23,8 @@
       badges: ["verified", "top-contributor"],
       isLiked: false,
       isBookmarked: false,
+    },
+    {
       title: "Best budget gaming setup under $800?",
       author: "BudgetGamer",
       replies: 23,
@@ -22,6 +36,8 @@
       badges: ["hardware-guru"],
       isLiked: true,
       isBookmarked: false,
+    },
+    {
       title: "Cyberpunk 2077 Phantom Liberty - Worth it?",
       author: "CyberFan2077",
       replies: 31,
@@ -33,9 +49,30 @@
       badges: ["expert"],
       isLiked: false,
       isBookmarked: true,
+    },
   ]
 
   const communityStats = [
+    {
+      value: "1.2M",
+      label: "Total Members",
+      icon: Users,
+    },
+    {
+      value: "50k",
+      label: "Active Discussions",
+      icon: Edit,
+    },
+    {
+      value: "2.5M",
+      label: "Total Posts",
+      icon: BarChart2,
+    },
+    {
+      value: "4.8/5",
+      label: "Community Rating",
+      icon: Star,
+    },
   ]
 
   return (
@@ -52,9 +89,15 @@
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {communityStats.map((stat, index) => (
+                <div key={index} className="text-center text-white">
                   <div className="flex items-center justify-center mb-2">
+                    <stat.icon className="w-8 h-8" />
                   </div>
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="text-purple-200">{stat.label}</div>
                 </div>
+              ))}
             </div>
           </div>
         </div>
@@ -70,27 +113,43 @@
               </div>
 
               <div className="space-y-4">
+                {communityPosts.map((post, index) => (
+                  <Card key={index} className="bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-2">
+                            <Avatar>
+                              <AvatarImage src={post.avatar} />
+                              <AvatarFallback>{post.author.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <span className="font-semibold">{post.author}</span>
                             <Badge
                               variant="outline"
                             >
+                              {post.category}
                             </Badge>
                             <span className="text-sm text-gray-500">•</span>
+                            <span className="text-sm text-gray-500">{post.timeAgo}</span>
                           </div>
                           <CardTitle className="text-xl mb-2 hover:text-purple-600 transition-colors">
+                            <a href="#">{post.title}</a>
                           </CardTitle>
+                          <p className="text-gray-600">{post.excerpt}</p>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-6 text-sm text-gray-500">
                           <div className="flex items-center space-x-1">
+                            <MessageSquare className="w-4 h-4" />
+                            <span>{post.replies}</span>
                           </div>
                           <button
+                            className={`flex items-center space-x-1 hover:text-red-600 transition-colors ${post.isLiked ? 'text-red-600' : ''}`}
                           >
+                            <Heart className="w-4 h-4" />
+                            <span>{post.likes}</span>
                           </button>
                           <button className="flex items-center space-x-1 hover:text-green-600 transition-colors">
                             <span>Share</span>
@@ -98,11 +157,17 @@
                         </div>
 
                         <div className="flex items-center gap-2">
-                            </Badge>
+                          {post.badges.map((badge, i) => (
+                            <Badge key={i} variant="secondary">{badge}</Badge>
+                          ))}
+                          <button className={`hover:text-blue-600 transition-colors ${post.isBookmarked ? 'text-blue-600' : ''}`}>
+                            <Bookmark className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
+                ))}
               </div>
             </div>
 
@@ -126,3 +191,6 @@
       </main>
     </div>
   )
+}
+
+export default CommunityPage

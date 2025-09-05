@@ -1,3 +1,54 @@
+import React from 'react'
+import Link from 'next/link'
+
+const MorePage = () => {
+  const sections = [
+    {
+      title: 'About KOODOS',
+      description: 'Learn about our mission, team, and values',
+      links: [
+        { title: 'Our Story', href: '/about' },
+        { title: 'Editorial Team', href: '/about/team' },
+        { title: 'Mission & Values', href: '/about/mission' },
+      ],
+    },
+    {
+      title: 'Contact & Support',
+      description: 'Get in touch with our editorial team',
+      links: [
+        { title: 'Editorial Contact', href: '/contact' },
+        { title: 'Technical Support', href: '/support' },
+        { title: 'Feedback', href: '/feedback' },
+      ],
+    },
+    {
+      title: 'Business',
+      description: 'Partnership and advertising opportunities',
+      links: [
+        { title: 'Advertise With Us', href: '/business/advertise' },
+        { title: 'Press Inquiries', href: '/business/press' },
+        { title: 'Partnerships', href: '/business/partnerships' },
+      ],
+    },
+    {
+      title: 'Legal',
+      description: 'Terms, policies, and legal information',
+      links: [
+        { title: 'User Agreement', href: '/terms' },
+        { title: 'Privacy Policy', href: '/privacy' },
+        { title: 'Cookie Policy', href: '/cookies' },
+      ],
+    },
+    {
+      title: 'RSS & Feeds',
+      description: 'Subscribe to our content feeds',
+      links: [
+        { title: 'All Articles RSS', href: '/rss/articles.xml' },
+        { title: 'Reviews RSS', href: '/rss/reviews.xml' },
+        { title: 'News RSS', href: '/rss/news.xml' },
+      ],
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-white">
@@ -16,58 +67,27 @@
 
         <div className="px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">About KOODOS</h3>
-              <p className="text-gray-600 mb-4">Learn about our mission, team, and values</p>
-              <div className="space-y-2">
-                <div className="bg-white p-3 rounded border">Our Story</div>
-                <div className="bg-white p-3 rounded border">Editorial Team</div>
-                <div className="bg-white p-3 rounded border">Mission & Values</div>
+            {sections.map((section, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
+                <h3 className="text-xl font-bold text-gray-800 mb-3">{section.title}</h3>
+                <p className="text-gray-600 mb-4">{section.description}</p>
+                <div className="space-y-2">
+                  {section.links.map((link, linkIndex) => (
+                    <Link href={link.href} key={linkIndex}>
+                      <a className="block bg-white p-3 rounded border hover:bg-gray-100 transition-colors">
+                        {link.title}
+                      </a>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Contact & Support</h3>
-              <p className="text-gray-600 mb-4">Get in touch with our editorial team</p>
-              <div className="space-y-2">
-                <div className="bg-white p-3 rounded border">Editorial Contact</div>
-                <div className="bg-white p-3 rounded border">Technical Support</div>
-                <div className="bg-white p-3 rounded border">Feedback</div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Business</h3>
-              <p className="text-gray-600 mb-4">Partnership and advertising opportunities</p>
-              <div className="space-y-2">
-                <div className="bg-white p-3 rounded border">Advertise With Us</div>
-                <div className="bg-white p-3 rounded border">Press Inquiries</div>
-                <div className="bg-white p-3 rounded border">Partnerships</div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">Legal</h3>
-              <p className="text-gray-600 mb-4">Terms, policies, and legal information</p>
-              <div className="space-y-2">
-                <div className="bg-white p-3 rounded border">User Agreement</div>
-                <div className="bg-white p-3 rounded border">Privacy Policy</div>
-                <div className="bg-white p-3 rounded border">Cookie Policy</div>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">RSS & Feeds</h3>
-              <p className="text-gray-600 mb-4">Subscribe to our content feeds</p>
-              <div className="space-y-2">
-                <div className="bg-white p-3 rounded border">All Articles RSS</div>
-                <div className="bg-white p-3 rounded border">Reviews RSS</div>
-                <div className="bg-white p-3 rounded border">News RSS</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
       </div>
     </div>
   )
+}
+
+export default MorePage

@@ -213,81 +213,7 @@ export default function VideosPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Featured Video - Hero Style */}
-        {featuredVideo && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-              <Zap className="w-6 h-6 text-yellow-500 mr-2" />
-              Featured Video
-            </h2>
-            
-            <div 
-              className="group cursor-pointer"
-              onClick={() => {
-                setSelectedVideo(featuredVideo)
-                setShowPlayer(true)
-              }}
-            >
-              <div className="grid lg:grid-cols-3 gap-8 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300">
-                {/* Video Thumbnail */}
-                <div className="lg:col-span-2 relative aspect-video bg-gradient-to-br from-blue-400 to-purple-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                    <div className="w-20 h-20 bg-black/70 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="w-10 h-10 text-white ml-1" />
-                    </div>
-                  </div>
-                    <Badge className="absolute top-4 left-4 bg-red-600 text-white">Featured</Badge>
-                    <Badge className="absolute top-4 right-4 bg-blue-600 text-white">
-                      {featuredVideo.category}
-                    </Badge>
-                    <div className="absolute bottom-4 right-4 bg-black/80 text-white text-sm px-3 py-1 rounded">
-                      {featuredVideo.duration}
-                    </div>
-                    <div className="absolute bottom-4 left-4 bg-black/80 text-white text-sm px-3 py-1 rounded">
-                      {featuredVideo.quality}
-                    </div>
-                  </div>
-                  
-                  {/* Video Info */}
-                  <div className="p-8 flex flex-col justify-center">
-                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">
-                      {featuredVideo.title}
-                    </h3>
-                    <p className="text-gray-300 mb-6 leading-relaxed">
-                      {featuredVideo.excerpt}
-                    </p>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                          <Users className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <div className="text-white font-medium">{featuredVideo.author}</div>
-                          <div className="text-gray-400 text-sm">{featuredVideo.subscribers.toLocaleString()} subscribers</div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-6 text-sm text-gray-400">
-                        <div className="flex items-center space-x-1">
-                          <Eye className="w-4 h-4" />
-                          <span>{formatViews(featuredVideo.views)} views</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <MessageCircle className="w-4 h-4" />
-                          <span>{featuredVideo.comments}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>{formatDate(featuredVideo.publishedAt)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        
 
         {/* Live Videos Section */}
         {liveVideos.length > 0 && (
@@ -298,48 +224,7 @@ export default function VideosPage() {
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {liveVideos.map((video) => (
-                <div 
-                  key={video.id} 
-                  className="group cursor-pointer bg-gray-900/80 border border-red-500/30 hover:border-red-500/60 rounded-xl overflow-hidden transition-all duration-300"
-                  onClick={() => {
-                    setSelectedVideo(video)
-                    setShowPlayer(true)
-                  }}
-                >
-                    <div className="aspect-video bg-gradient-to-br from-red-400 to-pink-500 relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-red-500/30 to-pink-500/30 flex items-center justify-center">
-                        <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
-                          <Play className="w-6 h-6 text-white ml-0.5" />
-                        </div>
-                      </div>
-                      <Badge className="absolute top-3 left-3 bg-red-600 text-white animate-pulse">
-                        🔴 LIVE
-                      </Badge>
-                      <div className="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded">
-                        {video.quality}
-                      </div>
-                    </div>
-                    
-                    <div className="p-4">
-                      <h3 className="font-bold text-white mb-2 group-hover:text-red-400 transition-colors line-clamp-2">
-                        {video.title}
-                      </h3>
-                      <div className="text-gray-400 text-sm mb-2">{video.author}</div>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center space-x-1">
-                          <Eye className="w-3 h-3" />
-                          <span>{formatViews(video.views)}</span>
-                        </div>
-                        <div className="flex items-center space-x-1 text-red-400">
-                          <Users className="w-3 h-3" />
-                          <span>Live</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              
             </div>
           </div>
         )}
@@ -349,45 +234,7 @@ export default function VideosPage() {
           <h2 className="text-2xl font-bold text-white mb-6">All Videos</h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {regularVideos.map((video) => (
-              <div 
-                key={video.id} 
-                className="group cursor-pointer bg-gray-900/50 border border-gray-700 hover:border-blue-500/50 rounded-xl overflow-hidden transition-all duration-300 hover:bg-gray-900/80"
-                onClick={() => {
-                  setSelectedVideo(video)
-                  setShowPlayer(true)
-                }}
-              >
-                  <div className="aspect-video bg-gradient-to-br from-blue-400 to-purple-500 relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                      <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Play className="w-6 h-6 text-white ml-0.5" />
-                      </div>
-                    </div>
-                    <Badge className="absolute top-3 left-3 bg-blue-600 text-white text-xs">
-                      {video.category}
-                    </Badge>
-                    <div className="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded">
-                      {video.duration}
-                    </div>
-                  </div>
-                  
-                  <div className="p-4">
-                    <h3 className="font-bold text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2 text-sm">
-                      {video.title}
-                    </h3>
-                    <div className="text-gray-400 text-sm mb-2">{video.author}</div>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <div className="flex items-center space-x-1">
-                        <Eye className="w-3 h-3" />
-                        <span>{formatViews(video.views)}</span>
-                      </div>
-                      <span>{formatDate(video.publishedAt)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            
           </div>
         </div>
 
