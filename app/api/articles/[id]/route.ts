@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/auth"
 
 /*
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
+  const { params } = context;
   try {
     const article = await prisma.article.findUnique({
       where: { id: params.id },
@@ -38,7 +39,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 */
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+  const { params } = context;
   try {
     const user = await requireAuth()
     const body = await request.json()
@@ -95,7 +97,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+  const { params } = context;
   try {
     const user = await requireAuth()
 
