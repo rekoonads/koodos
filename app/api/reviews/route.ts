@@ -98,9 +98,7 @@ export async function POST(request: NextRequest) {
         publishedAt: published ? new Date() : null,
         categoryId,
         authorId: user.id,
-        tags: {
-          connect: tagIds?.map((id: string) => ({ id })) || [],
-        },
+        tags: tags || [],
       },
       include: {
         author: {
