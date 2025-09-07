@@ -42,6 +42,7 @@ model User {
   
   // Relations
   articles          Article[]
+  reviews           Review[]            @relation("ReviewAuthor")
   comments          Comment[]
   reactions         Reaction[]
   bookmarks         Bookmark[]
@@ -186,6 +187,68 @@ model Article {
   @@map("articles")
 }
 
+// Review model
+model Review {
+  id                String         @id @default(cuid())
+  title             String
+  content           String
+  excerpt           String?
+  slug              String         @unique
+  author_id         String
+  author_name       String?
+  category_id       String?
+  status            article_status @default(DRAFT)
+  type              article_type   @default(REVIEW)
+  
+  // Gaming specific
+  game_title        String?
+  developer         String?
+  publisher         String?
+  release_date      DateTime?
+  review_score      Float?
+  pros              String[]       @default([])
+  cons              String[]       @default([])
+  verdict           String?
+  platforms         platform[]     @default([])
+  genres            genre[]        @default([])
+  
+  // Media
+  featured_image    String?
+  
+  // Engagement metrics
+  views_count       Int            @default(0)
+  likes_count       Int            @default(0)
+  shares_count      Int            @default(0)
+  comments_count    Int            @default(0)
+  bookmarks_count   Int            @default(0)
+  
+  // Publishing
+  published_at      DateTime?
+  read_time         Int?
+  
+  // Tags
+  tags              String[]       @default([])
+  
+  // Timestamps
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  
+  // Relations
+  author            User           @relation("ReviewAuthor", fields: [author_id], references: [id])
+  category          Category?      @relation(fields: [category_id], references: [id])
+
+  @@index([author_id])
+  @@index([category_id])
+  @@index([slug])
+  @@index([status])
+  @@index([type])
+  @@index([published_at])
+  @@index([created_at])
+  @@index([views_count])
+  @@index([likes_count])
+  @@map("reviews")
+}
+
 // Category system (keeping for organization)
 model Category {
   id               String     @id @default(cuid())
@@ -203,6 +266,7 @@ model Category {
   parent           Category?  @relation("CategoryHierarchy", fields: [parent_id], references: [id])
   children         Category[] @relation("CategoryHierarchy")
   articles         Article[]
+  reviews          Review[]
 
   @@index([is_active])
   @@index([parent_id])
