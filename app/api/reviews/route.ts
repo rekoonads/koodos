@@ -29,9 +29,6 @@ export async function GET(request: NextRequest) {
           category: {
             select: { id: true, name: true, slug: true, color: true },
           },
-          tags: {
-            select: { id: true, name: true, slug: true },
-          },
         },
         orderBy: { createdAt: "desc" },
         skip,
