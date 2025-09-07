@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,215 +7,705 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
-  description String?
-  color       String?   @default("#6366f1")
-  icon        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  articles    Article[]
-  reviews     Review[]
-  
-  @@map("categories")
-}
-
-model Article {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  excerpt     String?
-  content     String
-  featuredImage String?
-  imageAlt    String?
-  published   Boolean   @default(false)
-  featured    Boolean   @default(false)
-  views       Int       @default(0)
-  likes       Int       @default(0)
-  bookmarks   Int       @default(0)
-  shares      Int       @default(0)
-  readTime    Int       @default(5) // in minutes
-  seoTitle    String?
-  seoDescription String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
-  
-  categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id])
-  authorId    String
-  author      User      @relation(fields: [authorId], references: [id])
-  
-  tags        Tag[]     @relation("ArticleTags")
-  comments    Comment[]
-  media       Media[]
-  
-  @@map("articles")
-}
-
-model Review {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  excerpt     String?
-  content     String
-  featuredImage String?
-  imageAlt    String?
-  gameTitle   String
-  platform    String[]
-  genre       String[]
-  developer   String?
-  publisher   String?
-  releaseDate String?
-  rating      Float     @default(0) // 0-10 rating
-  pros        String[]
-  cons        String[]
-  scores      Json?     // { graphics: 9, gameplay: 8, story: 9, sound: 8, replayability: 7 }
-  published   Boolean   @default(false)
-  featured    Boolean   @default(false)
-  views       Int       @default(0)
-  likes       Int       @default(0)
-  bookmarks   Int       @default(0)
-  shares      Int       @default(0)
-  readTime    Int       @default(8) // in minutes
-  seoTitle    String?
-  seoDescription String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
-  
-  categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id])
-  authorId    String
-  author      User      @relation(fields: [authorId], references: [id])
-  
-  tags        Tag[]     @relation("ReviewTags")
-  comments    Comment[]
-  media       Media[]
-  
-  @@map("reviews")
-}
-
-model Tag {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  slug      String    @unique
-  color     String?   @default("#6366f1")
-  createdAt DateTime  @default(now())
-  
-  articles  Article[] @relation("ArticleTags")
-  reviews   Review[]  @relation("ReviewTags")
-  
-  @@map("tags")
-}
-
+// Enhanced User model with complete profile data
 model User {
-  id        String    @id @default(cuid())
-  clerkId   String    @unique
-  email     String    @unique
-  name      String?
-  avatar    String?
-  bio       String?
-  role      UserRole  @default(AUTHOR)
-  verified  Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                String              @id @default(cuid())
+  clerk_id          String              @unique
+  email             String              @unique
+  username          String?             @unique
+  first_name        String?
+  last_name         String?
+  display_name      String?
+  avatar            String?
+  bio               String?
+  website           String?
+  location          String?
+  birth_date        DateTime?
+  phone             String?
+  role              user_role           @default(USER)
+  is_active         Boolean             @default(true)
+  is_verified       Boolean             @default(false)
+  is_premium        Boolean             @default(false)
+  last_login        DateTime?
+  login_count       Int                 @default(0)
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
   
-  articles  Article[]
-  reviews   Review[]
-  comments  Comment[]
-  reactions Reaction[]
+  // Social links
+  social_links      Json?
   
+  // Privacy settings
+  privacy_settings  Json?
+  
+  // Notification preferences
+  notification_prefs Json?
+  
+  // Relations
+  articles          Article[]
+  comments          Comment[]
+  reactions         Reaction[]
+  bookmarks         Bookmark[]
+  follows           Follow[]            @relation("UserFollows")
+  followers         Follow[]            @relation("UserFollowers")
+  notifications     Notification[]
+  user_sessions     UserSession[]
+  activity_logs     ActivityLog[]
+  user_preferences  UserPreference[]
+  comment_reactions CommentReaction[]
+  shares            Share[]
+  views             View[]
+  reports           Report[]            @relation("ReportedBy")
+  reported_content  Report[]            @relation("ReportedUser")
+  ai_generations    AiGeneration[]
+
+  @@index([clerk_id])
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([is_active])
+  @@index([created_at])
   @@map("users")
 }
 
+// Enhanced Article model with proper author relationship
+model Article {
+  id                String         @id @default(cuid())
+  title             String
+  content           String
+  excerpt           String?
+  slug              String         @unique
+  author_id         String
+  author_name       String?
+  category_id       String?
+  status            article_status @default(DRAFT)
+  type              article_type   @default(NEWS)
+  content_type      String         @default("latest-updates")
+  
+  // SEO and metadata
+  meta_title        String?
+  meta_description  String?
+  meta_keywords     String?
+  
+  // Media
+  featured_image    String?
+  gallery_images    String[]       @default([])
+  video_url         String?
+  audio_url         String?
+  
+  // Gaming specific
+  game_title        String?
+  developer         String?
+  publisher         String?
+  release_date      DateTime?
+  review_score      Float?
+  pros              String[]       @default([])
+  cons              String[]       @default([])
+  verdict           String?
+  purchase_link     String?
+  price             String?
+  platforms         platform[]     @default([])
+  genres            genre[]        @default([])
+  
+  // Review specific fields
+  director          String?        // For movie reviews
+  network           String?        // For TV reviews
+  brand             String?        // For tech reviews
+  item_count        Int?           // For top lists
+  duration          String?        // For interviews/videos
+  interviewee       String?        // For interviews
+  interviewer       String?        // For interviews
+  stance            String?        // For opinions (Pro/Against/Neutral)
+  rating_breakdown  Json?          // Detailed rating breakdown
+  
+  // Video/Media specific
+  is_live           Boolean        @default(false)
+  quality           String?        // HD, 4K, etc.
+  
+  // Engagement specific
+  likes             Int            @default(0)
+  dislikes          Int            @default(0)
+  controversial     Boolean        @default(false)
+  trending          Boolean        @default(false)
+  
+  // Engagement metrics
+  views_count       Int            @default(0)
+  likes_count       Int            @default(0)
+  shares_count      Int            @default(0)
+  comments_count    Int            @default(0)
+  bookmarks_count   Int            @default(0)
+  
+  // Content flags
+  is_breaking       Boolean        @default(false)
+  is_featured       Boolean        @default(false)
+  show_on_homepage  Boolean        @default(false)
+  is_sponsored      Boolean        @default(false)
+  is_premium        Boolean        @default(false)
+  is_video          Boolean        @default(false)
+  is_interview      Boolean        @default(false)
+  
+  // Publishing
+  published_at      DateTime?
+  scheduled_at      DateTime?
+  read_time         Int?
+  
+  // Tags and categories
+  tags              String[]       @default([])
+  category_tags     String[]       @default([])
+  
+  // Timestamps
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  
+  // Relations
+  author            User           @relation(fields: [author_id], references: [id])
+  category          Category?      @relation(fields: [category_id], references: [id])
+  comments          Comment[]
+  reactions         Reaction[]
+  bookmarks         Bookmark[]
+  media             Media[]
+  shares            Share[]
+  views             View[]
+  reports           Report[]
+  notifications     Notification[]
+  ai_generations    AiGeneration[]
+  seo_analysis      SeoAnalysis[]
+
+  @@index([author_id])
+  @@index([category_id])
+  @@index([slug])
+  @@index([status])
+  @@index([type])
+  @@index([content_type])
+  @@index([published_at])
+  @@index([created_at])
+  @@index([is_featured])
+  @@index([show_on_homepage])
+  @@index([tags])
+  @@index([views_count])
+  @@index([likes_count])
+  @@map("articles")
+}
+
+// Category system (keeping for organization)
+model Category {
+  id               String     @id @default(cuid())
+  name             String     @unique
+  slug             String     @unique
+  description      String?
+  color            String?
+  icon             String?
+  parent_id        String?
+  is_active        Boolean    @default(true)
+  sort_order       Int        @default(0)
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  
+  parent           Category?  @relation("CategoryHierarchy", fields: [parent_id], references: [id])
+  children         Category[] @relation("CategoryHierarchy")
+  articles         Article[]
+
+  @@index([is_active])
+  @@index([parent_id])
+  @@index([slug])
+  @@index([sort_order])
+  @@map("categories")
+}
+
+// Enhanced Comment system with reactions
 model Comment {
-  id        String    @id @default(cuid())
-  content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              String            @id @default(cuid())
+  content         String
+  author_id       String
+  article_id      String
+  parent_id       String?
+  is_approved     Boolean           @default(true)
+  is_pinned       Boolean           @default(false)
+  is_edited       Boolean           @default(false)
+  likes_count     Int               @default(0)
+  replies_count   Int               @default(0)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
   
-  authorId  String
-  author    User      @relation(fields: [authorId], references: [id])
-  
-  articleId String?
-  article   Article?  @relation(fields: [articleId], references: [id])
-  
-  reviewId  String?
-  review    Review?   @relation(fields: [reviewId], references: [id])
-  
-  parentId  String?
-  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentReplies")
-  reactions Reaction[]
-  
+  // Relations
+  author          User              @relation(fields: [author_id], references: [id])
+  article         Article           @relation(fields: [article_id], references: [id], onDelete: Cascade)
+  parent          Comment?          @relation("CommentReplies", fields: [parent_id], references: [id])
+  replies         Comment[]         @relation("CommentReplies")
+  reactions       CommentReaction[]
+  reports         Report[]
+
+  @@index([author_id])
+  @@index([article_id])
+  @@index([parent_id])
+  @@index([created_at])
+  @@index([is_approved])
   @@map("comments")
 }
 
-model Media {
-  id        String    @id @default(cuid())
-  url       String
-  alt       String?
-  type      MediaType
-  size      Int?      // file size in bytes
-  width     Int?
-  height    Int?
-  createdAt DateTime  @default(now())
-  
-  articleId String?
-  article   Article?  @relation(fields: [articleId], references: [id])
-  
-  reviewId  String?
-  review    Review?   @relation(fields: [reviewId], references: [id])
-  
-  @@map("media")
-}
-
-model Newsletter {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  active    Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  
-  @@map("newsletter")
-}
-
+// Reaction system for articles
 model Reaction {
-  id          String       @id @default(cuid())
-  type        ReactionType
-  createdAt   DateTime     @default(now())
+  id         String        @id @default(cuid())
+  type       reaction_type
+  user_id    String
+  article_id String
+  created_at DateTime      @default(now())
+  
+  user       User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  article    Article       @relation(fields: [article_id], references: [id], onDelete: Cascade)
 
-  userId      String
-  user        User         @relation(fields: [userId], references: [id])
-
-  commentId   String
-  comment     Comment      @relation(fields: [commentId], references: [id])
-
-  @@unique([userId, commentId, type])
+  @@unique([user_id, article_id])
+  @@index([article_id])
+  @@index([user_id])
+  @@index([type])
   @@map("reactions")
 }
 
-enum ReactionType {
-  LIKE
-  LOVE
-  HAHA
-  WOW
-  SAD
-  ANGRY
+// Comment reactions (likes, etc.)
+model CommentReaction {
+  id         String              @id @default(cuid())
+  type       comment_reaction_type
+  user_id    String
+  comment_id String
+  created_at DateTime            @default(now())
+  
+  user       User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comment    Comment             @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, comment_id])
+  @@index([comment_id])
+  @@index([user_id])
+  @@map("comment_reactions")
 }
 
-enum UserRole {
+// Bookmark system
+model Bookmark {
+  id         String   @id @default(cuid())
+  user_id    String
+  article_id String
+  created_at DateTime @default(now())
+  
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  article    Article  @relation(fields: [article_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, article_id])
+  @@index([user_id])
+  @@index([article_id])
+  @@map("bookmarks")
+}
+
+// Follow system
+model Follow {
+  id           String   @id @default(cuid())
+  follower_id  String
+  following_id String
+  created_at   DateTime @default(now())
+  
+  follower     User     @relation("UserFollows", fields: [follower_id], references: [id], onDelete: Cascade)
+  following    User     @relation("UserFollowers", fields: [following_id], references: [id], onDelete: Cascade)
+
+  @@unique([follower_id, following_id])
+  @@index([follower_id])
+  @@index([following_id])
+  @@map("follows")
+}
+
+// Share tracking
+model Share {
+  id         String     @id @default(cuid())
+  user_id    String?
+  article_id String
+  platform   share_platform
+  ip_address String?
+  user_agent String?
+  created_at DateTime   @default(now())
+  
+  user       User?      @relation(fields: [user_id], references: [id])
+  article    Article    @relation(fields: [article_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([article_id])
+  @@index([platform])
+  @@index([created_at])
+  @@map("shares")
+}
+
+// View tracking
+model View {
+  id         String   @id @default(cuid())
+  user_id    String?
+  article_id String
+  ip_address String?
+  user_agent String?
+  duration   Int?     // seconds spent reading
+  created_at DateTime @default(now())
+  
+  user       User?    @relation(fields: [user_id], references: [id])
+  article    Article  @relation(fields: [article_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([article_id])
+  @@index([created_at])
+  @@map("views")
+}
+
+// Notification system
+model Notification {
+  id          String            @id @default(cuid())
+  user_id     String
+  type        notification_type
+  title       String
+  message     String
+  data        Json?             // Additional data for the notification
+  is_read     Boolean           @default(false)
+  article_id  String?
+  created_at  DateTime          @default(now())
+  read_at     DateTime?
+  
+  user        User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  article     Article?          @relation(fields: [article_id], references: [id])
+
+  @@index([user_id])
+  @@index([is_read])
+  @@index([created_at])
+  @@index([type])
+  @@map("notifications")
+}
+
+// User sessions for analytics
+model UserSession {
+  id         String   @id @default(cuid())
+  user_id    String
+  session_id String   @unique
+  ip_address String?
+  user_agent String?
+  started_at DateTime @default(now())
+  ended_at   DateTime?
+  duration   Int?     // in seconds
+  
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([started_at])
+  @@map("user_sessions")
+}
+
+// Activity logging
+model ActivityLog {
+  id          String        @id @default(cuid())
+  user_id     String
+  action      activity_type
+  entity_type String        // 'article', 'comment', 'user', etc.
+  entity_id   String
+  metadata    Json?
+  ip_address  String?
+  user_agent  String?
+  created_at  DateTime      @default(now())
+  
+  user        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([action])
+  @@index([entity_type])
+  @@index([created_at])
+  @@map("activity_logs")
+}
+
+// User preferences
+model UserPreference {
+  id         String   @id @default(cuid())
+  user_id    String
+  key        String
+  value      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, key])
+  @@index([user_id])
+  @@map("user_preferences")
+}
+
+// Report system
+model Report {
+  id          String      @id @default(cuid())
+  reporter_id String
+  reported_user_id String?
+  article_id  String?
+  comment_id  String?
+  type        report_type
+  reason      String
+  description String?
+  status      report_status @default(PENDING)
+  resolved_at DateTime?
+  resolved_by String?
+  created_at  DateTime    @default(now())
+  
+  reporter       User     @relation("ReportedBy", fields: [reporter_id], references: [id])
+  reported_user  User?    @relation("ReportedUser", fields: [reported_user_id], references: [id])
+  article        Article? @relation(fields: [article_id], references: [id])
+  comment        Comment? @relation(fields: [comment_id], references: [id])
+
+  @@index([reporter_id])
+  @@index([status])
+  @@index([created_at])
+  @@map("reports")
+}
+
+// Enhanced Media model
+model Media {
+  id          String     @id @default(cuid())
+  filename    String
+  original_name String?
+  url         String
+  type        media_type
+  size        Int?
+  width       Int?
+  height      Int?
+  duration    Int?       // for videos/audio
+  alt_text    String?
+  caption     String?
+  article_id  String?
+  user_id     String?
+  is_public   Boolean    @default(true)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  
+  article     Article?   @relation(fields: [article_id], references: [id])
+
+  @@index([article_id])
+  @@index([type])
+  @@index([created_at])
+  @@map("media")
+}
+
+// AI Generation tracking
+model AiGeneration {
+  id            String    @id @default(cuid())
+  type          ai_type
+  prompt        String
+  response      String?
+  model         String    @default("amazon.nova-micro-v1:0")
+  tokens_used   Int?
+  status        ai_status @default(PENDING)
+  error_message String?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  
+  // Relations
+  article_id    String?
+  user_id       String?
+  article       Article?  @relation(fields: [article_id], references: [id])
+  user          User?     @relation(fields: [user_id], references: [id])
+  
+  @@index([type])
+  @@index([status])
+  @@index([created_at])
+  @@index([article_id])
+  @@map("ai_generations")
+}
+
+// SEO Analysis tracking
+model SeoAnalysis {
+  id              String     @id @default(cuid())
+  url             String
+  title           String?
+  meta_description String?
+  keywords        String?    // JSON string for SQLite
+  seo_score       Int        @default(0)
+  issues          String?    // JSON string for SQLite
+  suggestions     String?    // JSON string for SQLite
+  status          seo_status @default(PENDING)
+  analyzed_at     DateTime?
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+  
+  // Relations
+  article_id      String?
+  article         Article?   @relation(fields: [article_id], references: [id])
+  
+  @@index([status])
+  @@index([seo_score])
+  @@index([created_at])
+  @@index([article_id])
+  @@map("seo_analysis")
+}
+
+// Enums
+enum user_role {
   ADMIN
   EDITOR
   AUTHOR
+  CONTRIBUTOR
+  MODERATOR
+  USER
 }
 
-enum MediaType {
+enum article_status {
+  DRAFT
+  PUBLISHED
+  HIDDEN
+  SCHEDULED
+  ARCHIVED
+  UNDER_REVIEW
+}
+
+enum article_type {
+  NEWS
+  REVIEW
+  GUIDE
+  FEATURE
+  INTERVIEW
+  OPINION
+  VIDEO
+  WIKI
+  LIST
+  SPOTLIGHT
+  ANIME
+  MANGA
+  COMICS
+  COSPLAY
+  ESPORTS
+  TECH
+  SCIENCE
+  MOVIE_REVIEW
+  TV_REVIEW
+  GAME_REVIEW
+  TECH_REVIEW
+  COMIC_REVIEW
+  TOP_LIST
+  LATEST_UPDATE
+}
+
+enum reaction_type {
+  LIKE
+  LOVE
+  LAUGH
+  ANGRY
+  SAD
+  FIRE
+  HEART_EYES
+}
+
+enum comment_reaction_type {
+  LIKE
+  DISLIKE
+  LOVE
+  LAUGH
+}
+
+enum notification_type {
+  COMMENT
+  LIKE
+  FOLLOW
+  MENTION
+  ARTICLE_PUBLISHED
+  COMMENT_REPLY
+  SYSTEM
+  PROMOTION
+}
+
+enum activity_type {
+  CREATE
+  UPDATE
+  DELETE
+  VIEW
+  LIKE
+  SHARE
+  COMMENT
+  FOLLOW
+  UNFOLLOW
+  LOGIN
+  LOGOUT
+}
+
+enum report_type {
+  SPAM
+  HARASSMENT
+  INAPPROPRIATE_CONTENT
+  COPYRIGHT
+  MISINFORMATION
+  OTHER
+}
+
+enum report_status {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+enum share_platform {
+  FACEBOOK
+  TWITTER
+  LINKEDIN
+  REDDIT
+  WHATSAPP
+  TELEGRAM
+  EMAIL
+  COPY_LINK
+}
+
+enum media_type {
   IMAGE
   VIDEO
   AUDIO
   DOCUMENT
+  GIF
+}
+
+enum platform {
+  PC
+  PS5
+  PS4
+  XBOX_SERIES
+  XBOX_ONE
+  NINTENDO_SWITCH
+  MOBILE_IOS
+  MOBILE_ANDROID
+  VR
+  STEAM_DECK
+  WEB
+}
+
+enum genre {
+  ACTION
+  ADVENTURE
+  RPG
+  STRATEGY
+  SIMULATION
+  SPORTS
+  RACING
+  FIGHTING
+  PUZZLE
+  HORROR
+  SHOOTER
+  PLATFORMER
+  MMO
+  INDIE
+  CASUAL
+  SURVIVAL
+  SANDBOX
+}
+
+enum ai_type {
+  META_DESCRIPTION
+  SEO_KEYWORDS
+  CONTENT_SUMMARY
+  TITLE_GENERATION
+  ARTICLE_CONTENT
+}
+
+enum ai_status {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum seo_status {
+  PENDING
+  ANALYZED
+  OPTIMIZED
+  FAILED
 }
