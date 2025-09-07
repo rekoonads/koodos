@@ -9,7 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       where: { id },
       include: {
         author: {
-          select: { id: true, display_name: true, avatar: true },
+          select: { id: true, first_name: true, last_name: true, avatar: true },
         },
         category: {
           select: { id: true, name: true, slug: true, color: true },
@@ -69,7 +69,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
       include: {
         author: {
-          select: { id: true, display_name: true, avatar: true },
+          select: { id: true, first_name: true, last_name: true, avatar: true },
         },
         category: {
           select: { id: true, name: true, slug: true, color: true },
