@@ -11,21 +11,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { email, name, avatar } = body
+    const { email, first_name, last_name, avatar } = body
 
     const user = await prisma.user.upsert({
-      where: { clerkId: userId },
+      where: { clerk_id: userId },
       update: {
         email,
-        name,
+        first_name,
+        last_name,
         avatar,
       },
       create: {
-        clerkId: userId,
+        clerk_id: userId,
         email,
-        name,
+        first_name,
+        last_name,
         avatar,
-        role: "AUTHOR", // Default role
+        role: "USER", // Default role
       },
     })
 

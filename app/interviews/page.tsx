@@ -68,7 +68,7 @@ export default function InterviewsPage() {
       setInterviews(prev => [...prev, ...newInterviews])
     }
     
-    if (pageNum >= 1 || pageInterviews.length === 0) setHasMore(false)
+    if (pageNum >= 1 || newInterviews.length === 0) setHasMore(false)
     setLoading(false)
   }, [])
 

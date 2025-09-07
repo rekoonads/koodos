@@ -203,7 +203,7 @@ export function AnimatedSidebar() {
       rotateY: 0,
       transition: {
         duration: 0.6,
-        ease: "easeInOut",
+        ease: [0.4, 0, 0.2, 1],
       },
     },
     exit: {
@@ -211,7 +211,7 @@ export function AnimatedSidebar() {
       rotateY: -90,
       transition: {
         duration: 0.6,
-        ease: "easeInOut",
+        ease: [0.4, 0, 0.2, 1],
       },
     },
   }
@@ -226,7 +226,7 @@ export function AnimatedSidebar() {
       rotateY: 90,
       transition: {
         duration: 0.6,
-        ease: "easeInOut",
+        ease: [0.4, 0, 0.2, 1],
       },
     },
     animate: {
@@ -234,7 +234,7 @@ export function AnimatedSidebar() {
       rotateY: 0,
       transition: {
         duration: 0.6,
-        ease: "easeInOut",
+        ease: [0.4, 0, 0.2, 1],
       },
     },
   }
@@ -245,12 +245,11 @@ export function AnimatedSidebar() {
 
     return (
       <motion.div
-        variants={pageVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
+        initial={{ x: "100%", rotateY: -90 }}
+        animate={{ x: 0, rotateY: 0 }}
+        exit={{ x: "100%", rotateY: -90 }}
+        transition={{ duration: 0.6, ease: "easeInOut" }}
         className="absolute inset-0 bg-black flex flex-col"
-
       >
         <div className="flex flex-col h-full overflow-hidden">
           <div className="p-6 flex-shrink-0">
@@ -327,10 +326,10 @@ export function AnimatedSidebar() {
         {!currentPage ? (
           <motion.div
             key="main-menu"
-            variants={mainMenuVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+            initial={{ x: 0, rotateY: 0 }}
+            animate={{ x: 0, rotateY: 0 }}
+            exit={{ x: "-100%", rotateY: 90 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
             className="absolute inset-0 flex flex-col"
           >
             <div className="flex flex-col h-full overflow-hidden">
@@ -446,10 +445,10 @@ export function AnimatedSidebar() {
             />
 
             <motion.div
-              variants={mainMenuVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               className="fixed left-0 top-0 h-full w-[85vw] max-w-80 bg-black border-r border-gray-700 z-50 flex flex-col lg:hidden shadow-2xl"
             >
               <SidebarContent />

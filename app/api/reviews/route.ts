@@ -8,15 +8,13 @@ export async function GET(request: NextRequest) {
     const page = Number.parseInt(searchParams.get("page") || "1")
     const limit = Number.parseInt(searchParams.get("limit") || "10")
     const category = searchParams.get("category")
-    const featured = searchParams.get("featured")
-    const published = searchParams.get("published") !== "false"
+    const status = searchParams.get("status") || "PUBLISHED"
 
     const skip = (page - 1) * limit
 
     const where = {
-      published,
+      status: status as any,
       ...(category && { category: { slug: category } }),
-      ...(featured === "true" && { featured: true }),
     }
 
     const [reviews, total] = await Promise.all([
@@ -62,18 +60,16 @@ export async function POST(request: NextRequest) {
       content,
       excerpt,
       featured_image,
-      gameTitle,
-      platform,
+      game_title,
+      platforms,
       rating,
       pros,
       cons,
-      categoryId,
+      category_id,
       tags,
-      published = false,
-      featured = false,
+      status = "DRAFT",
     } = body
 
-    // Generate slug from title
     const slug = title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
@@ -86,27 +82,23 @@ export async function POST(request: NextRequest) {
         content,
         excerpt,
         featured_image,
-        gameTitle,
-        platform,
-        rating,
-        pros,
-        cons,
-        published,
-        featured,
-        publishedAt: published ? new Date() : null,
-        categoryId,
-        authorId: user.id,
+        game_title,
+        platforms: platforms || [],
+        review_score: rating || 0,
+        pros: pros || [],
+        cons: cons || [],
+        status,
+        published_at: status === "PUBLISHED" ? new Date() : null,
+        category_id,
+        author_id: user.id,
         tags: tags || [],
       },
       include: {
         author: {
-          select: { id: true, name: true, avatar: true },
+          select: { id: true, email: true, avatar: true },
         },
         category: {
           select: { id: true, name: true, slug: true, color: true },
-        },
-        tags: {
-          select: { id: true, name: true, slug: true },
         },
       },
     })
