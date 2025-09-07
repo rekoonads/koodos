@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           author: {
-            select: { id: true, name: true, avatar: true },
+            select: { id: true, email: true, avatar: true },
           },
           category: {
             select: { id: true, name: true, slug: true, color: true },
