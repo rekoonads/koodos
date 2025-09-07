@@ -9,13 +9,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       where: { id },
       include: {
         author: {
-          select: { id: true, name: true, avatar: true },
+          select: { id: true, display_name: true, avatar: true },
         },
         category: {
           select: { id: true, name: true, slug: true, color: true },
-        },
-        tags: {
-          select: { id: true, name: true, slug: true },
         },
       },
     })
@@ -27,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Increment view count
     await prisma.article.update({
       where: { id },
-      data: { views: { increment: 1 } },
+      data: { views_count: { increment: 1 } },
     })
 
     return NextResponse.json(article)
@@ -43,7 +40,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const user = await requireAuth()
     const body = await request.json()
 
-    const { title, content, excerpt, featuredImage, imageAlt, categoryId, tagIds, published, featured } = body
+    const { title, content, excerpt, featured_image, category_id, tags, status } = body
 
     // Check if user owns the article or has admin/editor role
     const existingArticle = await prisma.article.findUnique({
@@ -54,7 +51,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Article not found" }, { status: 404 })
     }
 
-    if (existingArticle.authorId !== user.id && !["ADMIN", "EDITOR"].includes(user.role)) {
+    if (existingArticle.author_id !== user.id && !["ADMIN", "EDITOR"].includes(user.role)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
@@ -64,26 +61,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         title,
         content,
         excerpt,
-        featuredImage,
-        imageAlt,
-        published,
-        featured,
-        publishedAt: published && !existingArticle.published ? new Date() : existingArticle.publishedAt,
-        categoryId,
-        tags: {
-          set: [],
-          connect: tagIds?.map((id: string) => ({ id })) || [],
-        },
+        featured_image,
+        category_id,
+        status,
+        tags,
+        published_at: status === "PUBLISHED" && existingArticle.status !== "PUBLISHED" ? new Date() : existingArticle.published_at,
       },
       include: {
         author: {
-          select: { id: true, name: true, avatar: true },
+          select: { id: true, display_name: true, avatar: true },
         },
         category: {
           select: { id: true, name: true, slug: true, color: true },
-        },
-        tags: {
-          select: { id: true, name: true, slug: true },
         },
       },
     })
@@ -109,7 +98,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: "Article not found" }, { status: 404 })
     }
 
-    if (existingArticle.authorId !== user.id && user.role !== "ADMIN") {
+    if (existingArticle.author_id !== user.id && user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
