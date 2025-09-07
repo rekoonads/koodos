@@ -1,72 +1,67 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAuth } from '@clerk/nextjs/server';
+import { type NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const articleId = searchParams.get('articleId');
-
-  if (!articleId) {
-    return NextResponse.json({ error: 'articleId is required' }, { status: 400 });
-  }
-
   try {
+    const { searchParams } = new URL(request.url)
+    const articleId = searchParams.get("articleId")
+
+    if (!articleId) {
+      return NextResponse.json({ error: "Article ID is required" }, { status: 400 })
+    }
+
     const comments = await prisma.comment.findMany({
-      where: { articleId },
+      where: {
+        article_id: articleId,
+        parent_id: null,
+      },
       include: {
-        author: true,
-        reactions: true,
+        author: {
+          select: { id: true, email: true, avatar: true },
+        },
         replies: {
           include: {
-            author: true,
-            reactions: true,
+            author: {
+              select: { id: true, email: true, avatar: true },
+            },
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+      orderBy: { created_at: "desc" },
+    })
 
-    return NextResponse.json(comments);
+    return NextResponse.json(comments)
   } catch (error) {
-    console.error('Error fetching comments:', error);
-    return NextResponse.json({ error: 'Failed to fetch comments' }, { status: 500 });
+    console.error("Error fetching comments:", error)
+    return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = getAuth(request);
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    const user = await requireAuth()
+    const body = await request.json()
 
-    const body = await request.json();
-    const { content, articleId, parentId } = body;
-
-    if (!content || !articleId) {
-      return NextResponse.json({ error: 'content and articleId are required' }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
+    const { content, article_id, parent_id } = body
 
     const comment = await prisma.comment.create({
       data: {
         content,
-        articleId,
-        authorId: user.id,
-        parentId,
+        article_id,
+        parent_id,
+        author_id: user.id,
       },
-    });
+      include: {
+        author: {
+          select: { id: true, email: true, avatar: true },
+        },
+      },
+    })
 
-    return NextResponse.json(comment);
+    return NextResponse.json(comment, { status: 201 })
   } catch (error) {
-    console.error('Error creating comment:', error);
-    return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
+    console.error("Error creating comment:", error)
+    return NextResponse.json({ error: "Failed to create comment" }, { status: 500 })
   }
 }

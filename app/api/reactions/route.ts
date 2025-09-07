@@ -1,54 +1,68 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getAuth } from '@clerk/nextjs/server';
+import { type NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = getAuth(request);
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    const user = await requireAuth()
+    const body = await request.json()
 
-    const body = await request.json();
-    const { commentId, type } = body;
+    const { type, article_id } = body
 
-    if (!commentId || !type) {
-      return NextResponse.json({ error: 'commentId and type are required' }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    const existingReaction = await prisma.reaction.findFirst({
+    // Check if reaction already exists
+    const existingReaction = await prisma.reaction.findUnique({
       where: {
-        commentId,
-        userId: user.id,
-        type,
+        user_id_article_id: {
+          user_id: user.id,
+          article_id,
+        },
       },
-    });
+    })
 
     if (existingReaction) {
-      await prisma.reaction.delete({
-        where: {
-          id: existingReaction.id,
-        },
-      });
-      return NextResponse.json({ success: true, action: 'removed' });
+      // Update existing reaction
+      const reaction = await prisma.reaction.update({
+        where: { id: existingReaction.id },
+        data: { type },
+      })
+      return NextResponse.json(reaction)
     } else {
+      // Create new reaction
       const reaction = await prisma.reaction.create({
         data: {
-          commentId,
-          userId: user.id,
           type,
+          user_id: user.id,
+          article_id,
         },
-      });
-      return NextResponse.json(reaction);
+      })
+      return NextResponse.json(reaction, { status: 201 })
     }
   } catch (error) {
-    console.error('Error creating reaction:', error);
-    return NextResponse.json({ error: 'Failed to create reaction' }, { status: 500 });
+    console.error("Error creating reaction:", error)
+    return NextResponse.json({ error: "Failed to create reaction" }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const user = await requireAuth()
+    const { searchParams } = new URL(request.url)
+    const articleId = searchParams.get("articleId")
+
+    if (!articleId) {
+      return NextResponse.json({ error: "Article ID is required" }, { status: 400 })
+    }
+
+    await prisma.reaction.deleteMany({
+      where: {
+        user_id: user.id,
+        article_id: articleId,
+      },
+    })
+
+    return NextResponse.json({ message: "Reaction removed" })
+  } catch (error) {
+    console.error("Error removing reaction:", error)
+    return NextResponse.json({ error: "Failed to remove reaction" }, { status: 500 })
   }
 }

@@ -1,22 +1,46 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/auth"
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const page = Number.parseInt(searchParams.get("page") || "1")
-    const limit = Number.parseInt(searchParams.get("limit") || "10")
+    const page = parseInt(searchParams.get("page") || "1")
+    const limit = parseInt(searchParams.get("limit") || "10")
     const category = searchParams.get("category")
-    const featured = searchParams.get("featured")
+    const status = searchParams.get("status") || "PUBLISHED"
+    const skip = (page - 1) * limit
 
-    // Return empty result to trigger fallback articles
+    const where = {
+      status: status as any,
+      ...(category && { category: { slug: category } }),
+    }
+
+    const [articles, total] = await Promise.all([
+      prisma.article.findMany({
+        where,
+        include: {
+          author: {
+            select: { id: true, email: true, avatar: true },
+          },
+          category: {
+            select: { id: true, name: true, slug: true, color: true },
+          },
+        },
+        orderBy: { created_at: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.article.count({ where }),
+    ])
+
     return NextResponse.json({
-      articles: [],
+      articles,
       pagination: {
         page,
         limit,
-        total: 0,
-        pages: 0,
+        total,
+        pages: Math.ceil(total / limit),
       },
     })
   } catch (error) {
@@ -30,50 +54,27 @@ export async function POST(request: NextRequest) {
     const user = await requireAuth()
     const body = await request.json()
 
-    const {
-      title,
-      content,
-      excerpt,
-      featuredImage,
-      imageAlt,
-      categoryId,
-      tagIds,
-      published = false,
-      featured = false,
-    } = body
-
-    // Generate slug from title
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
+    const { title, content, excerpt, featured_image, category_id, tags, status } = body
 
     const article = await prisma.article.create({
       data: {
         title,
-        slug,
         content,
         excerpt,
-        featuredImage,
-        imageAlt,
-        published,
-        featured,
-        publishedAt: published ? new Date() : null,
-        categoryId,
-        authorId: user.id,
-        tags: {
-          connect: tagIds?.map((id: string) => ({ id })) || [],
-        },
+        featured_image,
+        category_id,
+        status: status || "DRAFT",
+        tags: tags || [],
+        author_id: user.id,
+        slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+        published_at: status === "PUBLISHED" ? new Date() : null,
       },
       include: {
         author: {
-          select: { id: true, name: true, avatar: true },
+          select: { id: true, email: true, avatar: true },
         },
         category: {
           select: { id: true, name: true, slug: true, color: true },
-        },
-        tags: {
-          select: { id: true, name: true, slug: true },
         },
       },
     })
