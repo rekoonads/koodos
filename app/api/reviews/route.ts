@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
             select: { id: true, name: true, slug: true, color: true },
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { created_at: "desc" },
         skip,
         take: limit,
       }),
